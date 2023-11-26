@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+  <Include href="KnownImageIds.vsct"/>
+  <Include href="VSGlobals.vsct"/>
+
+  <Commands package="AIProgrammingAssistant">
+    <Groups>
+      <Group guid="AIProgrammingAssistant" id="AIMenuGroup" priority="0x0600">
+		  <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
+      </Group>
+		<Group guid="AIProgrammingAssistant" id="AISubMenuGroup" priority="0x0600">
+			<Parent guid="AIProgrammingAssistant" id="AISubMenu"/>
+		</Group>
+    </Groups>
+
+	  <Menus>
+		  <Menu guid="AIProgrammingAssistant" id="AISubMenu" priority="0x0100" type="Menu">
+			  <Parent guid="AIProgrammingAssistant" id="AIMenuGroup"/>
+			  <Strings>
+				  <ButtonText>AI assistant</ButtonText>
+				  <CommandName>AI assistant</CommandName>
+			  </Strings>
+		  </Menu>
+	  </Menus>
+    <!--This section defines the elements the user can interact with, like a menu command or a button
+        or combo box in a toolbar. -->
+
+
+	  <Buttons>
+		  <Button guid="AIProgrammingAssistant" id="Optimize" priority="0x0100" type="Button">
+			  <Parent guid="AIProgrammingAssistant" id="AISubMenuGroup" />
+			  <Icon guid="ImageCatalogGuid" id="PropertySnippet" />
+			  <CommandFlag>IconIsMoniker</CommandFlag>
+			  <Strings>
+				  <ButtonText>Optimize</ButtonText>
+				  <LocCanonicalName>.CodeWin.Optimize</LocCanonicalName>
+			  </Strings>
+		  </Button>
+
+		  <Button guid="AIProgrammingAssistant" id="GenerateTest" priority="0x0200" type="Button">
+					  <Parent guid="AIProgrammingAssistant" id="AISubMenuGroup"/>
+			  <Icon guid="ImageCatalogGuid" id="TestManager" />
+			  <CommandFlag>IconIsMoniker</CommandFlag>
+			  <Strings>
+				  <ButtonText>Add Test File</ButtonText>
+				  <LocCanonicalName>.CodeWin.AddFile</LocCanonicalName>
+			  </Strings>
+		  </Button>
+		  <Button guid="AIProgrammingAssistant" id="CreateQuery" priority="0x0200" type="Button">
+			  <Parent guid="AIProgrammingAssistant" id="AISubMenuGroup"/>
+			  <Icon guid="ImageCatalogGuid" id="LocalServerAudit" />
+			  <CommandFlag>IconIsMoniker</CommandFlag>
+			  <Strings>
+				  <ButtonText>Translate to linq query</ButtonText>
+				  <LocCanonicalName>.CodeWin.CreateQuery</LocCanonicalName>
+			  </Strings>
+		  </Button>
+		  <Button guid="AIProgrammingAssistant" id="GiveFeedback" priority="0x0200" type="Button">
+			  <Parent guid="AIProgrammingAssistant" id="AISubMenuGroup"/>
+			  <Icon guid="ImageCatalogGuid" id="Feedback" />
+			  <CommandFlag>IconIsMoniker</CommandFlag>
+			  <Strings>
+				  <ButtonText>Give Feedback about code</ButtonText>
+				  <LocCanonicalName>.CodeWin.FormOpinion</LocCanonicalName>
+			  </Strings>
+		  </Button>
+		  <Button guid="AIProgrammingAssistant" id="SuggestVariableNames" priority="0x0200" type="Button">
+			  <Parent guid="AIProgrammingAssistant" id="AISubMenuGroup"/>
+			  <Icon guid="ImageCatalogGuid" id="ReplaceAll" />
+			  <CommandFlag>IconIsMoniker</CommandFlag>
+			  <Strings>
+				  <ButtonText>Review variable names</ButtonText>
+				  <LocCanonicalName>.CodeWin.SuggestVariableNames</LocCanonicalName>
+			  </Strings>
+		  </Button>
+	  </Buttons>
+	  
+  </Commands>
+
+  <Symbols>
+    <GuidSymbol name="AIProgrammingAssistant" value="{96cf927e-c19e-408d-a951-2020a7ee3542}">
+      <IDSymbol name="AIMenuGroup" value="0x0001" />
+		<IDSymbol name="AISubMenu" value="0x1100"/>
+		<IDSymbol name="AISubMenuGroup" value="0x1150"/>
+		<IDSymbol name="GiveFeedback" value="0x1200"/>
+		<IDSymbol name="SuggestVariableNames" value="0x1300"/>
+		<IDSymbol name="GenerateTest" value="0x0100" />
+		<IDSymbol name="Optimize" value="0x0010" />
+		<IDSymbol name="CreateQuery" value="0x0110" />
+    </GuidSymbol>
+  </Symbols>
+</CommandTable>

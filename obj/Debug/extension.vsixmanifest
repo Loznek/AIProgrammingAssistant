@@ -1,0 +1,21 @@
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011">
+  <Metadata>
+    <Identity Id="AIProgrammingAssistant.46850645-4d88-4573-918d-9a8f756b778c" Version="1.0" Language="en-US" Publisher="Zoltán Kende" />
+    <DisplayName>AIProgrammingAssistant</DisplayName>
+    <Description>Empty VSIX Project.</Description>
+    <Icon>Resources\Icon.png</Icon>
+    <PreviewImage>Resources\Icon.png</PreviewImage>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">
+      <ProductArchitecture>amd64</ProductArchitecture>
+    </InstallationTarget>
+  </Installation>
+  <Prerequisites>
+    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[17.0,)" DisplayName="Visual Studio core editor" />
+  </Prerequisites>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.VsPackage" Path="AIProgrammingAssistant.pkgdef" />
+    <Asset Type="Microsoft.VisualStudio.MefComponent" Path="AIProgrammingAssistant.dll" />
+  </Assets>
+</PackageManifest>

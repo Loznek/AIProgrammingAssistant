@@ -1,0 +1,87 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\Szakdolgozat_2023\\AIProgrammingAssistant\\AIProgrammingAssistant.csproj": {}
+  },
+  "projects": {
+    "D:\\Szakdolgozat_2023\\AIProgrammingAssistant\\AIProgrammingAssistant.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Szakdolgozat_2023\\AIProgrammingAssistant\\AIProgrammingAssistant.csproj",
+        "projectName": "AIProgrammingAssistant",
+        "projectPath": "D:\\Szakdolgozat_2023\\AIProgrammingAssistant\\AIProgrammingAssistant.csproj",
+        "packagesPath": "C:\\Users\\zolta\\.nuget\\packages\\",
+        "outputPath": "D:\\Szakdolgozat_2023\\AIProgrammingAssistant\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "fallbackFolders": [
+          "C:\\Program Files\\MSVisualStudio\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\zolta\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "dependencies": {
+            "Azure.AI.OpenAI": {
+              "target": "Package",
+              "version": "[1.0.0-beta.9, )"
+            },
+            "Community.VisualStudio.Toolkit.17": {
+              "include": "Compile, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[17.0.482, )"
+            },
+            "Community.VisualStudio.Toolkit.DependencyInjection.Core.17": {
+              "target": "Package",
+              "version": "[17.0.20, )"
+            },
+            "Community.VisualStudio.Toolkit.DependencyInjection.Microsoft.17": {
+              "target": "Package",
+              "version": "[17.0.20, )"
+            },
+            "Community.VisualStudio.VSCT": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[16.0.29.6, )"
+            },
+            "Microsoft.VSSDK.BuildTools": {
+              "target": "Package",
+              "version": "[17.0.5232, )",
+              "generatePathProperty": true
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-arm64": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}
