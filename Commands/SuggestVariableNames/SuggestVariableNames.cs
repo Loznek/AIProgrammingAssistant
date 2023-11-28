@@ -1,4 +1,5 @@
 ﻿using AIProgrammingAssistant.AIConnection;
+using AIProgrammingAssistant.Classification;
 using AIProgrammingAssistant.Commands.Optimize;
 using Community.VisualStudio.Toolkit;
 using Community.VisualStudio.Toolkit.DependencyInjection;
@@ -39,9 +40,9 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
                 var tabs = lastLine.Count(x => x == ' ');
                 var wholeCode = activeDocument?.TextView.TextBuffer.CurrentSnapshot.GetText();
                 string[] separator = new string[] { "####" }; ;
-                string resultMessage = await aiApi.AskForVariableRevisionAsync( selectedCode.ToString(), wholeCode);
+                string resultMessage = await aiApi.AskForVariableRevisionAsync(selectedCode.ToString(), wholeCode);
                 var resultValues = resultMessage.Split(separator, System.StringSplitOptions.None);
-                var message = resultValues[1].Replace("\n", "\n" + new string(' ', Math.Max(tabs - 5, 0)) + "//m> ");
+                var message = resultValues[1].Replace("\n", "\n" + new string(' ', Math.Max(tabs - 5, 0)) + SuggestionLineSign.message + " ");
                 var goodCode = resultValues[0].Replace("\n", "\n" + new string(' ', Math.Max(tabs, 0)));
                 var point = activeDocument.TextView.Selection.AnchorPoint;
                 var edit = activeDocument.TextBuffer.CreateEdit();

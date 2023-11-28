@@ -1,8 +1,11 @@
 ﻿using AIProgrammingAssistant.AIConnection;
+using AIProgrammingAssistant.Classification;
+using Azure;
 using Community.VisualStudio.Toolkit;
 using Community.VisualStudio.Toolkit.DependencyInjection;
 using Community.VisualStudio.Toolkit.DependencyInjection.Core;
 using Community.VisualStudio.Toolkit.DependencyInjection.Microsoft;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.TextManager.Interop;
 using System;
@@ -43,8 +46,28 @@ namespace AIProgrammingAssistant.Commands.Optimize
                 var lastLine = lines[lines.Length - 1];
                 var tabs = lastLine.Count(x => x == ' ');
                 var wholeCode = activeDocument?.TextView.TextBuffer.CurrentSnapshot.GetText();
-                string goodCode = await aiApi.AskForOptimizedCodeAsync(wholeCode, selectedCode.ToString());
-                goodCode = goodCode.Replace("\n", "\n" + new string(' ', Math.Max(tabs - 5, 0)) + "//o> ");
+                string goodCode = "";
+                try
+                {
+                    goodCode = await aiApi.AskForOptimizedCodeAsync(wholeCode, selectedCode.ToString());
+                }
+                catch (RequestFailedException ex)
+                {
+                    await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", new string(ex.Message.TakeWhile(c => c != '\r').ToArray()) + " \r\nError code: " + ex.ErrorCode);
+                    if (ex.ErrorCode.Equals("invalid_api_key"))
+                    {
+                        string keyString;
+                        TextInputDialog.Show("Api Key", "You can change your API key", "key", out keyString);
+                        AIProgrammingAssistantPackage.apiKey = keyString;
+                    }
+                    return;
+                }
+                catch (AggregateException ex) {
+                    await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", ex.InnerException.Message + "\r\nThe problem is might be with your internet connection.");
+                    
+                };
+               
+                goodCode = goodCode.Replace("\n", "\n" + new string(' ', Math.Max(tabs - 5, 0)) + SuggestionLineSign.optimization + " ");
                 var point = activeDocument.TextView.Selection.AnchorPoint;
                 var edit = activeDocument.TextBuffer.CreateEdit();
                 var position = activeDocument?.TextView.Selection.AnchorPoint.Position;
@@ -53,13 +76,11 @@ namespace AIProgrammingAssistant.Commands.Optimize
 
                 var optimizedEnd = activeDocument?.TextView.Selection.SelectedSpans.LastOrDefault().End;
 
-                goodCode = goodCode.Replace("//o> ", "     ");
+                goodCode = goodCode.Replace(SuggestionLineSign.optimization, "    ");
 
-                var span = new Span();
                 IVsTextManager2 textManager = (IVsTextManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));
                 textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out IVsTextView activeView);
                 OptimizeHandler filter = new OptimizeHandler(activeView, activeDocument, (SnapshotPoint)originalStart, (SnapshotPoint)originalEnd, (SnapshotPoint)optimizedEnd, goodCode);
-                activeView.AddCommandFilter(filter, out _);
 
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 

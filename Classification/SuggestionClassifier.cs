@@ -51,11 +51,11 @@ namespace AIProgrammingAssistant.Classification
                 string text = line.Snapshot.GetText(
                         new SnapshotSpan(line.Start, line.End));
                 text = text.TrimStart();
-                if (text.StartsWith("//o>", StringComparison.Ordinal))
+                if (text.StartsWith(SuggestionLineSign.optimization, StringComparison.Ordinal))
                     type = _classificationTypeRegistry.GetClassificationType("suggestion.optimization");
-                else if (text.StartsWith("//q>", StringComparison.Ordinal))
+                else if (text.StartsWith(SuggestionLineSign.linq, StringComparison.Ordinal))
                     type = _classificationTypeRegistry.GetClassificationType("suggestion.linq");
-                else if (text.StartsWith("//m>", StringComparison.Ordinal))
+                else if (text.StartsWith(SuggestionLineSign.optimization, StringComparison.Ordinal))
                     type = _classificationTypeRegistry.GetClassificationType("suggestion.message");
 
                 if (type != null)

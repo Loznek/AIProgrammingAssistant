@@ -20,7 +20,6 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
         private readonly SnapshotPoint originalEndPoint;
         private readonly SnapshotPoint optimizedEndPoint;
         private readonly string insertedText;
-        private bool deleted = false;
         private IOleCommandTarget nextCommandTarget;
 
         public SuggestVariableNamesHandler(IVsTextView textView, DocumentView activeDocumentView, SnapshotPoint originalStartPoint, SnapshotPoint originalEndPoint, SnapshotPoint optimizedEndPoint, string insertedText)
@@ -36,23 +35,21 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
 
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
-            if (!deleted && pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.BACKSPACE)
+            if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.BACKSPACE)
             {
                 // User pressed Enter, so delete the inserted text
                 var edit = activeDocumentView.TextBuffer.CreateEdit();
                 edit.Delete(new Span(originalEndPoint.Position, optimizedEndPoint.Position - originalEndPoint.Position));
                 edit.Apply();
-                deleted = true;
                 textView.RemoveCommandFilter(this);
                 return VSConstants.S_OK;
             }
-            else if (!deleted && pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN)
+            else if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN)
             {
                 var edit = activeDocumentView.TextBuffer.CreateEdit();
                 edit.Delete(new Span(originalStartPoint.Position, optimizedEndPoint.Position - originalStartPoint.Position));
                 edit.Insert(originalStartPoint, insertedText);
                 edit.Apply();
-                deleted = true;
                 textView.RemoveCommandFilter(this);
                 return VSConstants.S_OK;
 

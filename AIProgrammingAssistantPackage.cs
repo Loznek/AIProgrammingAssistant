@@ -28,20 +28,21 @@ namespace AIProgrammingAssistant
         public static string apiKey { get; set; }
         protected override void InitializeServices(IServiceCollection services)
         {
-            services.AddSingleton<AIConnection.IAIFunctions, AIConnection.AzureApi>();
+            services.AddScoped<AIConnection.IAIFunctions, AIConnection.AzureApi>();
             //services.AddScoped<Optimize>();
             //services.AddScoped<CreateQuery>();
             //services.AddScoped<GenerateTest>();
             //services.AddScoped<GiveFeedback>();
             //services.AddScoped<SuggestVariableNames>();
-            services.RegisterCommands(ServiceLifetime.Singleton);
+            
+            services.RegisterCommands(ServiceLifetime.Scoped);
         }  
 
-        
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             await base.InitializeAsync(cancellationToken, progress);
             _dte = await GetServiceAsync(typeof(DTE)) as DTE2;
+            apiKey= "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";
             Assumes.Present(_dte);
         }  
     }

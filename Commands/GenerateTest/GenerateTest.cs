@@ -22,7 +22,7 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
     public class GenerateTest : BaseDICommand
     {
         private static string testFolderPath;
-        
+
 
         private readonly IAIFunctions aiApi;
         public GenerateTest(DIToolkitPackage package, IAIFunctions api) : base(package)
@@ -34,7 +34,7 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
 
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
-            
+
             _dte = AIProgrammingAssistantPackage._dte;
             var activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
 
@@ -42,30 +42,32 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             var wholeCode = activeDocument?.TextView.TextBuffer.CurrentSnapshot.GetText();
             if (selectedCode.HasValue)
             {
-                FileInfo testFile = await AddFileAsync();
-                var nameSpace=testFile.DirectoryName.Split('\\').Last();
-                string testCode = await aiApi.AskForTestCodeAsync(selectedCode.ToString());
+                TestFileInfo testFile = await AddFileAsync();
+
+
+                string testCode = await aiApi.AskForTestCodeAsync(selectedCode?.GetText(), wholeCode, testFile.NameSpace,testFile.ClassName);
 
                 activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
 
                 var edit = activeDocument.TextBuffer.CreateEdit();
                 edit.Insert(0, testCode);
                 edit.Apply();
-
+                _dte.ExecuteCommand("ProjectandSolutionContextMenus.Project.SyncNamespaces");
+                _dte.ExecuteCommand("Edit.FormatDocument");
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             }
 
-            await VS.MessageBox.ShowWarningAsync("AIProgrammingAssistant", "Button clicked");
         }
 
-        private async Task<FileInfo> AddFileAsync()
+        private async Task<TestFileInfo> AddFileAsync()
         {
+            TestFileInfo testFileInfo = new TestFileInfo();
             string testFileName;
             TextInputDialog.Show("Generate testfile", "Enter the name of the testfile ", "Testfile.cs", out testFileName);
-
+            testFileInfo.ClassName = testFileName.Substring(0,testFileName.Length-3);
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            string testDirectoryPath="";
+            string testDirectoryPath = "";
             var folderDialog = new FolderBrowserDialog();
             folderDialog.Description = "Select the test directory!";
             folderDialog.SelectedPath = Directory.GetParent(_dte.Solution.FullName).FullName;
@@ -77,7 +79,7 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             }
 
             FileInfo testFile = new FileInfo(Path.Combine(testDirectoryPath, testFileName));
-            
+
             // Make sure the directory exists before we create the file. Don't use
             // `PackageUtilities.EnsureOutputPath()` because it can silently fail.
             Directory.CreateDirectory(testFile.DirectoryName);
@@ -91,11 +93,13 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
                 while (enumerator.MoveNext())
                 {
                     Project analyzedProject = (Project)enumerator.Current;
-                    var root = analyzedProject.GetRootFolder().Substring(1, analyzedProject.GetRootFolder().Length-2);
-                    var fname = analyzedProject.FullName;
+                    var root = analyzedProject.GetRootFolder().Substring(0, analyzedProject.GetRootFolder().Length - 1);
+                    
+                  
                     if (testDirectoryPath.Contains(root))
                     {
-                       testProject = analyzedProject;
+                        testProject = analyzedProject;
+                        testFileInfo.NameSpace = analyzedProject.Name + testDirectoryPath.Replace(root, "").Replace("\\\\", ".");
                     }
                 }
 
@@ -106,12 +110,19 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
 
                 ServiceProvider sp = new ServiceProvider((Microsoft.VisualStudio.OLE.Interop.IServiceProvider)_dte);
                 VsShellUtilities.OpenDocument(sp, testFile.FullName);
-                ExecuteCommandIfAvailable("SolutionExplorer.SyncWithActiveDocument");
+                //ExecuteCommandIfAvailable("SolutionExplorer.SyncWithActiveDocument");
+                _dte.ExecuteCommand("SolutionExplorer.SyncWithActiveDocument");
+
 
                 _dte.ActiveDocument.Activate();
                 item.Document.Activate();
             }
-            return testFile;
+            else
+            {
+                return null;
+            }
+
+            return testFileInfo;
 
         }
 
