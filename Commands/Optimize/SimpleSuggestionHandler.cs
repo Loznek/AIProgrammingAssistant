@@ -9,27 +9,22 @@ using System.Text;
 using System.Threading.Tasks;
 using Community.VisualStudio.Toolkit;
 using EnvDTE;
+using AIProgrammingAssistant.Commands.Helpers;
 
 namespace AIProgrammingAssistant.Commands.Optimize
 {
     internal class SimpleSuggestionHandler : IOleCommandTarget
     {
         private readonly IVsTextView textView;
-        private readonly DocumentView activeDocumentView;
-        private readonly SnapshotPoint originalStartPoint;
-        private readonly SnapshotPoint originalEndPoint;
-        private readonly SnapshotPoint optimizedEndPoint;
+        private ActiveDocumentProperties activeDocumentProperties;
         private readonly string insertedText;
         private IOleCommandTarget nextCommandTarget;
 
-        public SimpleSuggestionHandler(IVsTextView textView, DocumentView activeDocumentView, SnapshotPoint originalStartPoint, SnapshotPoint originalEndPoint, SnapshotPoint optimizedEndPoint, string insertedText)
+        public SimpleSuggestionHandler(IVsTextView textView, ActiveDocumentProperties activeDocumentProperties, string insertedText)
         {
             this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
             this.insertedText = insertedText ?? throw new ArgumentNullException(nameof(insertedText));
-            this.activeDocumentView = activeDocumentView ?? throw new ArgumentNullException(nameof(activeDocumentView));
-            this.originalStartPoint = originalStartPoint;
-            this.originalEndPoint = originalEndPoint;
-            this.optimizedEndPoint = optimizedEndPoint;
+            this.activeDocumentProperties = activeDocumentProperties ?? throw new ArgumentNullException(nameof(activeDocumentProperties));
             textView.AddCommandFilter(this, out nextCommandTarget);
         }
 
@@ -37,22 +32,14 @@ namespace AIProgrammingAssistant.Commands.Optimize
         {
             if ( pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.BACKSPACE)
             {
-                // User pressed Enter, so delete the inserted text
-                var edit = activeDocumentView.TextBuffer.CreateEdit();
-                edit.Delete(new Span(originalEndPoint.Position, optimizedEndPoint.Position - originalEndPoint.Position));
-                edit.Apply();
+                DocumentHelper.deleteSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, activeDocumentProperties.OptimizedEndPosition);
                 textView.RemoveCommandFilter(this);
-                AIProgrammingAssistantPackage._dte.ExecuteCommand("Edit.FormatDocument");
                 return VSConstants.S_OK;
             }
             else if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN)
             {
-                var edit = activeDocumentView.TextBuffer.CreateEdit();
-                edit.Delete(new Span(originalStartPoint.Position, optimizedEndPoint.Position - originalStartPoint.Position));
-                edit.Insert(originalStartPoint, insertedText);
-                edit.Apply();
+                DocumentHelper.enforceSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalStartPosition, activeDocumentProperties.OptimizedEndPosition, insertedText);
                 textView.RemoveCommandFilter(this);
-                AIProgrammingAssistantPackage._dte.ExecuteCommand("Edit.FormatDocument");
                 return VSConstants.S_OK;
 
             }

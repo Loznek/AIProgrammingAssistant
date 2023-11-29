@@ -15,15 +15,15 @@ using Community.VisualStudio.Toolkit.DependencyInjection.Core;
 using Community.VisualStudio.Toolkit.DependencyInjection;
 using System.Windows.Forms;
 using static Azure.Core.HttpHeader;
+using AIProgrammingAssistant.Commands.Helpers;
+using AIProgrammingAssistant.Commands.Exceptions;
+using AIProgrammingAssistant.Classification;
 
 namespace AIProgrammingAssistant.Commands.GenerateTest
 {
     [Command(PackageIds.GenerateTest)]
     public class GenerateTest : BaseDICommand
     {
-        private static string testFolderPath;
-
-
         private readonly IAIFunctions aiApi;
         public GenerateTest(DIToolkitPackage package, IAIFunctions api) : base(package)
         {
@@ -34,38 +34,24 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
 
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
-
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             _dte = AIProgrammingAssistantPackage._dte;
-            var activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
-
-            var selectedCode = activeDocument?.TextView.Selection.SelectedSpans.FirstOrDefault();
-            var wholeCode = activeDocument?.TextView.TextBuffer.CurrentSnapshot.GetText();
-            if (selectedCode.HasValue)
+            ActiveDocumentProperties activeDocumentProperties;
+            try
             {
-                TestFileInfo testFile = await AddFileAsync();
-
-
-                string testCode = await aiApi.AskForTestCodeAsync(selectedCode?.GetText(), wholeCode, testFile.NameSpace,testFile.ClassName);
-
-                activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
-
-                var edit = activeDocument.TextBuffer.CreateEdit();
-                edit.Insert(0, testCode);
-                edit.Apply();
-                _dte.ExecuteCommand("ProjectandSolutionContextMenus.Project.SyncNamespaces");
-                _dte.ExecuteCommand("Edit.FormatDocument");
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
+            }
+            catch (WrongSelectionException ex)
+            {
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", ex.Message);
+                return;
             }
 
-        }
-
-        private async Task<TestFileInfo> AddFileAsync()
-        {
             TestFileInfo testFileInfo = new TestFileInfo();
             string testFileName;
             TextInputDialog.Show("Generate testfile", "Enter the name of the testfile ", "Testfile.cs", out testFileName);
-            testFileInfo.ClassName = testFileName.Substring(0,testFileName.Length-3);
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            testFileInfo.ClassName = testFileName.Substring(0, testFileName.Length - 3);
+
 
             string testDirectoryPath = "";
             var folderDialog = new FolderBrowserDialog();
@@ -85,66 +71,65 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             Directory.CreateDirectory(testFile.DirectoryName);
 
 
-            if (!testFile.Exists)
+            if (testFile.Exists)
             {
-                Project testProject = _dte.Solution.FindProjectItem(_dte.ActiveDocument.FullName).ContainingProject;
-                Projects projects = _dte.Solution.Projects;
-                var enumerator = projects.GetEnumerator();
-                while (enumerator.MoveNext())
-                {
-                    Project analyzedProject = (Project)enumerator.Current;
-                    var root = analyzedProject.GetRootFolder().Substring(0, analyzedProject.GetRootFolder().Length - 1);
-                    
-                  
-                    if (testDirectoryPath.Contains(root))
-                    {
-                        testProject = analyzedProject;
-                        testFileInfo.NameSpace = analyzedProject.Name + testDirectoryPath.Replace(root, "").Replace("\\\\", ".");
-                    }
-                }
-
-                await WriteFileAsync(testProject, testFile.FullName);
-
-                ProjectItem item = testProject.AddFileToProject(testFile);
-                testProject.ProjectItems.AddFromFile(testFile.FullName);
-
-                ServiceProvider sp = new ServiceProvider((Microsoft.VisualStudio.OLE.Interop.IServiceProvider)_dte);
-                VsShellUtilities.OpenDocument(sp, testFile.FullName);
-                //ExecuteCommandIfAvailable("SolutionExplorer.SyncWithActiveDocument");
-                _dte.ExecuteCommand("SolutionExplorer.SyncWithActiveDocument");
-
-
-                _dte.ActiveDocument.Activate();
-                item.Document.Activate();
-            }
-            else
-            {
-                return null;
-            }
-
-            return testFileInfo;
-
-        }
-
-        private void ExecuteCommandIfAvailable(string commandName)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            Command command;
-
-            try
-            {
-                command = _dte.Commands.Item(commandName);
-            }
-            catch (ArgumentException)
-            {
-                // The command does not exist, so we can't execute it.
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", "A tesfile already exists with the given name!");
                 return;
             }
 
-            if (command.IsAvailable)
+            Project testProject = _dte.Solution.FindProjectItem(_dte.ActiveDocument.FullName).ContainingProject;
+            Projects projects = _dte.Solution.Projects;
+            var enumerator = projects.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                _dte.ExecuteCommand(commandName);
+                Project analyzedProject = (Project)enumerator.Current;
+                var root = analyzedProject.GetRootFolder().Substring(0, analyzedProject.GetRootFolder().Length - 1);
+
+
+                if (testDirectoryPath.Contains(root))
+                {
+                    testProject = analyzedProject;
+                    testFileInfo.NameSpace = analyzedProject.Name + testDirectoryPath.Replace(root, "").Replace("\\\\", ".");
+                }
             }
+
+            string testCode;
+            try
+            {
+               testCode = await aiApi.AskForTestCodeAsync(activeDocumentProperties.SelectedCode, activeDocumentProperties.WholeCode, testFileInfo.NameSpace, testFileInfo.ClassName);
+            }
+            catch (InvalidKeyException keyException)
+            {
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", keyException.Message);
+                TextInputDialog.Show("Worng OpenAI Api key was given", "You can change your API key", "key", out string keyString);
+                AIProgrammingAssistantPackage.apiKey = keyString;
+                return;
+
+            }
+            catch (AIApiException apiException)
+            {
+                var exceptionMessage = apiException.Message;
+                exceptionMessage = exceptionMessage.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
+                DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, exceptionMessage);
+                return;
+            }
+            
+
+            await WriteFileAsync(testProject, testFile.FullName);
+
+            ProjectItem item = testProject.AddFileToProject(testFile);
+            testProject.ProjectItems.AddFromFile(testFile.FullName);
+
+            ServiceProvider sp = new ServiceProvider((Microsoft.VisualStudio.OLE.Interop.IServiceProvider)_dte);
+            VsShellUtilities.OpenDocument(sp, testFile.FullName);
+            //ExecuteCommandIfAvailable("SolutionExplorer.SyncWithActiveDocument");
+            _dte.ExecuteCommand("SolutionExplorer.SyncWithActiveDocument");
+            _dte.ActiveDocument.Activate();
+            item.Document.Activate();
+
+            DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, testCode);
+            _dte.ExecuteCommand("ProjectandSolutionContextMenus.Project.SyncNamespaces");
+            _dte.ExecuteCommand("Edit.FormatDocument");
         }
 
         private static async Task<int> WriteFileAsync(Project project, string file)

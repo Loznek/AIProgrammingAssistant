@@ -56,12 +56,14 @@
     <Compile Include="Commands\CreateQuery\CreateQueryHandler.cs" />
     <Compile Include="Commands\Exceptions\AIApiException.cs" />
     <Compile Include="Commands\Exceptions\InvalidKeyException.cs" />
+    <Compile Include="Commands\Exceptions\WrongSelectionException.cs" />
     <Compile Include="Commands\GenerateTest\GenerateTest.cs" />
     <Compile Include="Commands\GenerateTest\TestFileInfo.cs" />
     <Compile Include="Commands\GiveFeedBack\GiveFeedback.cs" />
+    <Compile Include="Commands\Helpers\ActiveDocumentProperties.cs" />
     <Compile Include="Commands\Helpers\DocumentHelper.cs" />
     <Compile Include="Commands\Optimize\Optimize.cs" />
-    <Compile Include="Commands\Optimize\OptimizeHandler.cs" />
+    <Compile Include="Commands\Optimize\SimpleSuggestionHandler.cs" />
     <Compile Include="Commands\SuggestVariableNames\SuggestVariableNames.cs" />
     <Compile Include="Commands\SuggestVariableNames\SuggestVariableNamesHandler.cs" />
     <Compile Include="Commands\Helpers\ProjectHelper.cs" />

@@ -20,6 +20,8 @@ namespace AIProgrammingAssistant
     /// </summary>
     internal sealed partial class PackageIds
     {
+        public const int MyMenuGroup = 0x0011;
+        public const int MyCommandId = 0x0111;
         public const int AIMenuGroup = 0x0001;
         public const int AISubMenu = 0x1100;
         public const int AISubMenuGroup = 0x1150;

@@ -21,7 +21,7 @@ namespace AIProgrammingAssistant.AIConnection
             string keyString;
             if (AIProgrammingAssistantPackage.apiKey == null)
             {
-                TextInputDialog.Show("Api Key", "Enter the key of the API", "key", out keyString);
+                TextInputDialog.Show("OpenAI Api Key", "Enter the key of the API", "key", out keyString);
                 AIProgrammingAssistantPackage.apiKey = keyString;
             }
             else
@@ -50,16 +50,18 @@ namespace AIProgrammingAssistant.AIConnection
             }
 
             //ChatMessage message = null;
-            try {
+            try
+            {
                 Response<ChatCompletions> response = await client.GetChatCompletionsAsync(chatCompletionsOptions);
                 ChatMessage message = response.Value.Choices[0].Message;
                 return "\r\n" + message.Content + "\r\n";
             }
             catch (RequestFailedException ex)
             {
-                if (ex.ErrorCode.Equals("invalid_api_key")) throw new InvalidKeyException();          
+                if (ex.ErrorCode.Equals("invalid_api_key")) throw new InvalidKeyException();
                 else throw new AIApiException(new string(ex.Message.TakeWhile(c => c != '\r').ToArray()));
-            } catch (AggregateException ex)
+            }
+            catch (AggregateException ex)
             {
                 throw new AIApiException(ex.InnerException.Message);
             }
@@ -69,12 +71,13 @@ namespace AIProgrammingAssistant.AIConnection
         {
             var conversationMessages = new List<ChatMessage>()
                 {
-                    /*new(ChatRole.System, $"There is a C# file: " + codeFile +
-                     $"There will be a given a part of this file, and you will be ordered to optimize that part of code - and only that part, not the whole file. You have the whole file to understand the context of the geven code, and to see the indentation of it."),*/
-                    new(ChatRole.User, $"Optimize this given C# code snippet:" +
-                selectedCode +
-                $"Your ansver should only contain the optimized version of the given code without any explanation. " +
-                $"If you believe that, the code part cannot be optomized your answer must be exactly the following: 'Code can't be optimized' "),
+                   new(ChatRole.System, $"There is a C# file: " + codeFile +
+                                        $"There will be a given a part of this file, and you will be ordered to optimize that part of code - and only that part, not the whole file." +
+                                        $"You have the whole file to understand the context of the geven code, and to see the indentation of it."),
+                   new(ChatRole.User,   $"Optimize this given C# code snippet:" +
+                                        selectedCode +
+                                        $"Your ansver should only contain the optimized version of the given code without any explanation. " +
+                                        $"If you strongly believe that, the code part cannot be optomized your answer must be exactly the following: 'Code can't be optimized' "),
 
                 };
             var chatCompletionsOptions = new ChatCompletionsOptions()
@@ -90,7 +93,7 @@ namespace AIProgrammingAssistant.AIConnection
             {
                 Response<ChatCompletions> response = await client.GetChatCompletionsAsync(chatCompletionsOptions);
                 ChatMessage message = response.Value.Choices[0].Message;
-                if (message.Content.Equals("Code can't be optimized")) throw new AIApiException(message.Content);
+                if (message.Content.Contains("Code can't be optimized")) throw new AIApiException(message.Content);
                 return "\r\n" + message.Content + "\r\n";
             }
             catch (RequestFailedException ex)
@@ -109,16 +112,11 @@ namespace AIProgrammingAssistant.AIConnection
             var conversationMessages = new List<ChatMessage>()
                 {
 
-                    new(ChatRole.System, $"We have a database with the following data object files in a .net project what uses entity framework:\n" +
-                    schema
-                   ),
+                    new(ChatRole.System, $"We have a database with the following data object files in a .net project what uses entity framework:\n" + schema),
                     new(ChatRole.System, $"For the dbContext we have the following file" + context ),
-                    new(ChatRole.User, $"Write me a LINQ query, what satisfies the following human question: " +
-                    humanQuery +
-                    $"\n Your answer should only contain the code of the LINQ query without any explanation." +
-                    $"If you can't create the LINQ query because the human question doesn't make sense based on the database entites, your answer should be exactly the following: 'LINQ query can't be created'"
-
-                    )
+                    new(ChatRole.User, $"Write me a LINQ query, what satisfies the following human question: " + humanQuery +
+                                       $"\n Your answer should only contain the code of the LINQ query without any explanation." +
+                                       $"If you can't create the LINQ query because the human question doesn't make sense based on the database entites, your answer should be exactly the following: 'LINQ query can't be created'")
                 };
 
             var chatCompletionsOptions = new ChatCompletionsOptions()
@@ -158,11 +156,9 @@ namespace AIProgrammingAssistant.AIConnection
         {
             var conversationMessages = new List<ChatMessage>()
                 {
-                    new(ChatRole.User, $"Write a whole testfile for the given C# code, using Microsoft.VisualStudio.TestTools.UnitTesting testpackage" +
-                code +
-                $"Your answer must contain only  the testfile's code without any explanation. The name of the testclass is '"+className+"' in the '" +nameSpace + "' namespace."+
-                $"To provide you additional information I gave you the whole file, which the code snippet belongs to: " +
-                context),
+                    new(ChatRole.User, $"Write a whole testfile for the given C# code, using Microsoft.VisualStudio.TestTools.UnitTesting testpackage" + code +
+                                       $"Your answer must contain only  the testfile's code without any explanation. The name of the testclass is '"+className+"' in the '" +nameSpace + "' namespace."+
+                                       $"To provide you additional information I gave you the whole file, which the code snippet belongs to: " + context),
                 };
 
             var chatCompletionsOptions = new ChatCompletionsOptions()
@@ -179,7 +175,7 @@ namespace AIProgrammingAssistant.AIConnection
             {
                 Response<ChatCompletions> response = await client.GetChatCompletionsAsync(chatCompletionsOptions);
                 ChatMessage message = response.Value.Choices[0].Message;
-                
+
                 return "\r\n" + message.Content + "\r\n";
             }
             catch (RequestFailedException ex)
@@ -193,8 +189,8 @@ namespace AIProgrammingAssistant.AIConnection
             }
         }
 
-        
-       
+
+
 
         public async Task<string> AskForVariableRevisionAsync(string selectedCode, string context)
         {
@@ -204,7 +200,8 @@ namespace AIProgrammingAssistant.AIConnection
                      $"There will be a given a part of this file, and you will be asked to revision that code part regarding its variable names, considering a c# naming conventions and the logic of the code snippet."+
                      $"Pay attention that all variable names are expressive. Replace all the variable names, for which you have a better solution." +
                      $"Your anwer should be in that form: first you should write the whole corrected code without any explanation, and after that you should list the variable name changes: which name you replaces for what name" +
-                     $"Between the corrected code and the list of the changes put a line with '####' text. So your answer must be like this: 'Only the Corrected code goes here without any explanation or introduction' + '####\n' + 'list of changes goes here'."+
+                     $"Between the corrected code and the list of the changes put a line with '####' text." +
+                     $"So your answer must be like this: 'Only the Corrected code goes here without any explanation or introduction' + '####\n' + 'list of changes goes here'."+
                      $"Your answer must contain the whole code snippet without explanation, not just the changed variables."+
                      $"For example you must give back some result in this form, where a variable in the given snippet named 'Some_variablename': " +
                      $"int someVariableName = 0;" +
@@ -217,12 +214,9 @@ namespace AIProgrammingAssistant.AIConnection
                      $"####" +
                      $"grlname -> girlName"+
                      $"bname -> boyName" +
-                     $"\n\n If you think there is no need to change any variable name, your answer should be exactly the following: 'I don't suggest any variable name change'"
-
-                     ),
-                    new(ChatRole.User, $"There is this given C# code snippet:" +
-                selectedCode +
-                $"Which variables should be renamed? Give me back the corrected code and the list of the changed variables!"),
+                     $"\n\n If you think there is no need to change any variable name, your answer should be exactly the following: 'I don't suggest any variable name change'"),
+                    new(ChatRole.User, $"There is this given C# code snippet:" + selectedCode +
+                                       $"Which variables should be renamed? Give me back the corrected code and the list of the changed variables!"),
                 };
             var chatCompletionsOptions = new ChatCompletionsOptions()
             {
@@ -237,7 +231,7 @@ namespace AIProgrammingAssistant.AIConnection
             {
                 Response<ChatCompletions> response = await client.GetChatCompletionsAsync(chatCompletionsOptions);
                 ChatMessage message = response.Value.Choices[0].Message;
-                if (message.Content.Equals("I don't suggest any variable name change")) throw new AIApiException(message.Content);
+                if (message.Content.Contains("I don't suggest any variable name change")) throw new AIApiException(message.Content);
                 return "\r\n" + message.Content + "\r\n";
             }
             catch (RequestFailedException ex)

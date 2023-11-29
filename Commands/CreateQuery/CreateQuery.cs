@@ -1,5 +1,7 @@
 ﻿using AIProgrammingAssistant.AIConnection;
 using AIProgrammingAssistant.Classification;
+using AIProgrammingAssistant.Commands.Exceptions;
+using AIProgrammingAssistant.Commands.Helpers;
 using AIProgrammingAssistant.Commands.Optimize;
 using Community.VisualStudio.Toolkit;
 using Community.VisualStudio.Toolkit.DependencyInjection;
@@ -34,29 +36,19 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
 
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            var activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
-            var selectedCode = activeDocument?.TextView.Selection.SelectedSpans.FirstOrDefault();
-
-            if (!selectedCode.HasValue)
+            _dte = AIProgrammingAssistantPackage._dte;
+            ActiveDocumentProperties activeDocumentProperties;
+            try
             {
-                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant", "Please select a method!");
+                activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
+            }
+            catch (WrongSelectionException ex) {
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", ex.Message);
                 return;
             }
-
-            var start = activeDocument?.TextView.Selection.SelectedSpans.FirstOrDefault().Start.GetContainingLine().GetText();
-            var numberOfStartingSpaces = start.TakeWhile(c => c == ' ').Count();
-            var wholeCode = activeDocument?.TextView.TextBuffer.CurrentSnapshot.GetText();
-            var originalStart = activeDocument?.TextView.Selection.SelectedSpans.FirstOrDefault().Start;
-            var originalEnd = activeDocument?.TextView.Selection.SelectedSpans.LastOrDefault().End;
-
-
-           
-
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            _dte = AIProgrammingAssistantPackage._dte;
-
-
+            
             if (entitiesFolderPath == null)
             {
                 var folderDialog = new FolderBrowserDialog();
@@ -84,33 +76,41 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
                 }
                 else return;
             }
+
             FileInfo dbContextFile = new FileInfo(dbContextFilePath);
             string schema = "";
             string context = "";
             modelFiles.ForEach(f => schema += getTextAsync(f.FullName).Result);
             context += await getTextAsync(dbContextFile.FullName);
             List<string> queries = new List<string>();
-           
-            List<string> rawQueries = await aiApi.AskForQueryAsync(selectedCode?.GetText(), context, schema);
-            rawQueries.ForEach(q => queries.Add(q.Replace("\n", "\n" + new string(' ', Math.Max(numberOfStartingSpaces - 5, 0)) + SuggestionLineSign.linq +" ")));
+            List<string> rawQueries;
 
+            try
+            {
+                rawQueries = await aiApi.AskForQueryAsync(activeDocumentProperties.SelectedCode, context, schema);
+            }
+            catch (InvalidKeyException keyException)
+            {
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", keyException.Message);
+                TextInputDialog.Show("Worng OpenAI Api key was given", "You can change your API key", "key", out string keyString);
+                AIProgrammingAssistantPackage.apiKey = keyString;
+                return;
 
-
-            var point = activeDocument.TextView.Selection.AnchorPoint;
-            var edit = activeDocument.TextBuffer.CreateEdit();
-            var position = activeDocument?.TextView.Selection.AnchorPoint.Position;
-            edit.Insert(position.Value, "\n" + queries[0]);
-            edit.Apply();
-            var optimizedEnd = activeDocument?.TextView.Selection.SelectedSpans.LastOrDefault().End;
-
-
+            }
+            catch (AIApiException apiException)
+            {
+                var exceptionMessage = apiException.Message;
+                exceptionMessage = exceptionMessage.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
+                DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, exceptionMessage);
+                return;
+            }
+            
+            rawQueries.ForEach(q => queries.Add(q.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.linq +" ")));
+            activeDocumentProperties.OptimizedEndPosition= DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, "\n" + queries[0]);
+         
             IVsTextManager2 textManager = (IVsTextManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));
             textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out IVsTextView activeView);
-            new CreateQueryHandler(activeView, activeDocument, (SnapshotPoint)originalStart, (SnapshotPoint)originalEnd, (SnapshotPoint)optimizedEnd, queries);
-
-
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
+            new CreateQueryHandler(activeView, activeDocumentProperties ,queries);
         }
 
         protected async Task<string> getTextAsync(string file)

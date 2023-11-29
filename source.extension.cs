@@ -9,9 +9,10 @@ namespace AIProgrammingAssistant
     {
         public const string Id = "AIProgrammingAssistant.46850645-4d88-4573-918d-9a8f756b778c";
         public const string Name = "AIProgrammingAssistant";
-        public const string Description = @"Empty VSIX Project.";
+        public const string Description = @"An AI assistant extension, what help you in coding with the power of GPT langugage models.
+OpenAI API key needed";
         public const string Language = "en-US";
-        public const string Version = "1.0";
+        public const string Version = "0.1";
         public const string Author = "Zoltán Kende";
         public const string Tags = "";
     }

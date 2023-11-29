@@ -19,7 +19,7 @@ using Microsoft;
 namespace AIProgrammingAssistant
 {
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version)]
+    //[InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(PackageGuids.AIProgrammingAssistantString)]
     public sealed class AIProgrammingAssistantPackage : MicrosoftDIToolkitPackage<AIProgrammingAssistantPackage>
@@ -42,7 +42,7 @@ namespace AIProgrammingAssistant
         {
             await base.InitializeAsync(cancellationToken, progress);
             _dte = await GetServiceAsync(typeof(DTE)) as DTE2;
-            apiKey= "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";
+            //apiKey= "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";
             Assumes.Present(_dte);
         }  
     }
