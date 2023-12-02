@@ -11,7 +11,7 @@ namespace AIProgrammingAssistant.AIConnection
         Task<string> AskForOptimizedCodeAsync(string codeFile, string selectedCode);
         Task<string> AskForTestCodeAsync(string code, string wholeCode, string nameSpace, string className);
 
-        Task<List<string>> AskForQueryAsync(string humanQuery, string context, string schema);
+        Task<List<string>> AskForQueryAsync(string humanQuery, string wholeCode, string context, string schema);
 
         Task<string> AskForFeedbackAsync(string code, string context);
 

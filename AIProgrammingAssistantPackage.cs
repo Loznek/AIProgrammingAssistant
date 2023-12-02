@@ -22,28 +22,33 @@ namespace AIProgrammingAssistant
     //[InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(PackageGuids.AIProgrammingAssistantString)]
-    public sealed class AIProgrammingAssistantPackage : MicrosoftDIToolkitPackage<AIProgrammingAssistantPackage>
+    public sealed class AIProgrammingAssistantPackage : MicrosoftDIToolkitPackage<AIProgrammingAssistantPackage> //ToolkitPackage 
     {
         public static DTE2 _dte;
         public static string apiKey { get; set; }
+
+        
         protected override void InitializeServices(IServiceCollection services)
         {
-            services.AddScoped<AIConnection.IAIFunctions, AIConnection.AzureApi>();
-            //services.AddScoped<Optimize>();
-            //services.AddScoped<CreateQuery>();
-            //services.AddScoped<GenerateTest>();
-            //services.AddScoped<GiveFeedback>();
-            //services.AddScoped<SuggestVariableNames>();
+            base.InitializeServices(services);
+            services.AddTransient<AIConnection.IAIFunctions, AIConnection.AzureApi>();
+            services.AddTransient<Optimize>();
+            services.AddTransient<CreateQuery>();
+            services.AddTransient<GenerateTest>();
+            services.AddTransient<GiveFeedback>();
+            services.AddTransient<SuggestVariableNames>();
             
-            services.RegisterCommands(ServiceLifetime.Scoped);
+            //services.RegisterCommands(ServiceLifetime.Scoped);
         }  
-
+        
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             await base.InitializeAsync(cancellationToken, progress);
             _dte = await GetServiceAsync(typeof(DTE)) as DTE2;
             //apiKey= "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";
             Assumes.Present(_dte);
+            
+            //await this.RegisterCommandsAsync();
         }  
     }
 

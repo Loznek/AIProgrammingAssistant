@@ -19,9 +19,10 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
 {
 
     [Command(PackageIds.SuggestVariableNames)]
-    public class SuggestVariableNames : BaseDICommand
+    public class SuggestVariableNames : BaseDICommand // ////BaseCommand<SuggestVariableNames>
     {
-        private readonly IAIFunctions aiApi;
+        private IAIFunctions aiApi;
+
         public SuggestVariableNames(DIToolkitPackage package, IAIFunctions api) : base(package)
         {
             aiApi = api;
@@ -51,18 +52,14 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
             catch (InvalidKeyException keyException)
             {
                 await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", keyException.Message);
-                string keyString;
-                TextInputDialog.Show("Worng OpenAI Api key was given", "You can change your API key", "key", out keyString);
+                TextInputDialog.Show("Worng OpenAI Api key was given", "You can change your API key", "key", out string keyString);
                 AIProgrammingAssistantPackage.apiKey = keyString;
                 return;
 
             }
             catch (AIApiException apiException)
             {
-                resultMessage = apiException.Message;
-                resultMessage = resultMessage.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
-                DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, resultMessage);
-
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", apiException.Message);
                 return;
             }
 
@@ -72,7 +69,7 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
             var message = resultValues[1].Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
             var goodCode = resultValues[0].Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces, 0)));
 
-            activeDocumentProperties.OriginalEndPosition = DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, message);
+            activeDocumentProperties.OptimizedEndPosition = DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, message);
 
             IVsTextManager2 textManager = (IVsTextManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));
             textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out IVsTextView activeView);

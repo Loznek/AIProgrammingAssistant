@@ -51,6 +51,8 @@ namespace AIProgrammingAssistant.Classification
             ForegroundColor = Colors.Orange;
             IsBold = true;
             IsItalic = true;
+            this.TextDecorations = null;
+            this.TextEffects = null;
             BackgroundOpacity = 0.8;
             ForegroundOpacity = 0.8;
         }

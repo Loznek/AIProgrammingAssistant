@@ -222,7 +222,6 @@ D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\VSCT.read.1.tlog
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\VSCT.write.1.tlog
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\resources.json
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\ctoFiles.json
-D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\_EmptyResource.resources.original
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\mergeCto.cache
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\AIProgrammingAssistant.csproj.CoreCompileInputs.cache
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\AIProgrammingAssistant.csproj.CopyComplete

@@ -12,7 +12,7 @@ namespace AIProgrammingAssistant
         public const string Description = @"An AI assistant extension, what help you in coding with the power of GPT langugage models.
 OpenAI API key needed";
         public const string Language = "en-US";
-        public const string Version = "0.1";
+        public const string Version = "0.4";
         public const string Author = "Zoltán Kende";
         public const string Tags = "";
     }

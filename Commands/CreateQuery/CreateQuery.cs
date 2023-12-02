@@ -17,14 +17,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace AIProgrammingAssistant.Commands.CreateQuery
 {
     [Command(PackageIds.CreateQuery)]
-    public class CreateQuery : BaseDICommand
+    public class CreateQuery :  BaseDICommand  ////BaseCommand<CreateQuery>
     {
-        private readonly IAIFunctions aiApi;
+        private IAIFunctions aiApi;
+        
+        
         public CreateQuery(DIToolkitPackage package, IAIFunctions api) : base(package)
         {
             aiApi = api;
@@ -37,7 +38,7 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
+            aiApi = new AzureApi();
             _dte = AIProgrammingAssistantPackage._dte;
             ActiveDocumentProperties activeDocumentProperties;
             try
@@ -67,9 +68,9 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
 
             if (dbContextFilePath == null)
             {
-                OpenFileDialog openFileDialog = new OpenFileDialog();
+                FileDialog openFileDialog = new OpenFileDialog();
                 openFileDialog.InitialDirectory = Directory.GetParent(_dte.Solution.FullName).FullName;
-                openFileDialog.Title = "Select the database context file!";
+                openFileDialog.Title = "Select the database context file! Next time you will be able to use the function!";
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     dbContextFilePath = openFileDialog.FileName;
@@ -78,16 +79,19 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
             }
 
             FileInfo dbContextFile = new FileInfo(dbContextFilePath);
+ 
             string schema = "";
-            string context = "";
-            modelFiles.ForEach(f => schema += getTextAsync(f.FullName).Result);
-            context += await getTextAsync(dbContextFile.FullName);
+            string context = await dbContextFile.OpenText().ReadToEndAsync();
+            foreach (FileInfo file in modelFiles)
+            {
+                schema += await file.OpenText().ReadToEndAsync();
+            }
             List<string> queries = new List<string>();
             List<string> rawQueries;
 
             try
             {
-                rawQueries = await aiApi.AskForQueryAsync(activeDocumentProperties.SelectedCode, context, schema);
+                rawQueries = await aiApi.AskForQueryAsync(activeDocumentProperties.SelectedCode,activeDocumentProperties.WholeCode, context, schema);
             }
             catch (InvalidKeyException keyException)
             {
@@ -99,14 +103,12 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
             }
             catch (AIApiException apiException)
             {
-                var exceptionMessage = apiException.Message;
-                exceptionMessage = exceptionMessage.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
-                DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, exceptionMessage);
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", apiException.Message);
                 return;
             }
             
             rawQueries.ForEach(q => queries.Add(q.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.linq +" ")));
-            activeDocumentProperties.OptimizedEndPosition= DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, "\n" + queries[0]);
+            activeDocumentProperties.OptimizedEndPosition= DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, queries[0]);
          
             IVsTextManager2 textManager = (IVsTextManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));
             textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out IVsTextView activeView);

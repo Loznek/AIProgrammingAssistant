@@ -21,9 +21,11 @@ using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 namespace AIProgrammingAssistant.Commands.GiveFeedBack
 {
     [Command(PackageIds.GiveFeedback)]
-    public class GiveFeedback : BaseDICommand
+    public class GiveFeedback : BaseDICommand //BaseCommand<GiveFeedback> 
     {
-        private readonly IAIFunctions aiApi;
+        private IAIFunctions aiApi;
+
+        
         public GiveFeedback(DIToolkitPackage package, IAIFunctions api) : base(package)
         {
             aiApi = api;
@@ -31,6 +33,7 @@ namespace AIProgrammingAssistant.Commands.GiveFeedBack
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            //aiApi = new AzureApi();
             ActiveDocumentProperties activeDocumentProperties;
             try
             {
@@ -57,15 +60,13 @@ namespace AIProgrammingAssistant.Commands.GiveFeedBack
             }
             catch (AIApiException apiException)
             {
-                feedback = apiException.Message;
-                feedback = feedback.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
-                DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, feedback);
-
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", apiException.Message);
                 return;
             }
+            
 
             feedback = feedback.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
-            DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, feedback);
+            DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, feedback);
         }
 
 

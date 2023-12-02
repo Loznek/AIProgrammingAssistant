@@ -1,5 +1,6 @@
 ﻿using AIProgrammingAssistant.Commands.Exceptions;
 using Community.VisualStudio.Toolkit;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Text;
 using System;
 using System.Collections.Generic;
@@ -26,12 +27,10 @@ namespace AIProgrammingAssistant.Commands.Helpers
             return properties;
         }
 
-        public static int insertSuggestion(DocumentView activeDocument, string suggestion) {
+        public static int insertSuggestion(DocumentView activeDocument, int startPosition, string suggestion) {
             var edit = activeDocument.TextBuffer.CreateEdit();
-            var position = activeDocument?.TextView.Selection.AnchorPoint.Position;
-            edit.Insert(position.Value, suggestion);
+            edit.Insert(startPosition, suggestion);
             edit.Apply();
-            AIProgrammingAssistantPackage._dte.ExecuteCommand("Edit.FormatDocument");
             return (int)(activeDocument?.TextView.Selection.SelectedSpans.LastOrDefault().End.Position);
         }
 
@@ -51,5 +50,6 @@ namespace AIProgrammingAssistant.Commands.Helpers
             edit.Apply();
             AIProgrammingAssistantPackage._dte.ExecuteCommand("Edit.FormatDocument");
         }
+  
     }
 }

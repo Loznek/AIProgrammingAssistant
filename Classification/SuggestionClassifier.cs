@@ -55,7 +55,7 @@ namespace AIProgrammingAssistant.Classification
                     type = _classificationTypeRegistry.GetClassificationType("suggestion.optimization");
                 else if (text.StartsWith(SuggestionLineSign.linq, StringComparison.Ordinal))
                     type = _classificationTypeRegistry.GetClassificationType("suggestion.linq");
-                else if (text.StartsWith(SuggestionLineSign.optimization, StringComparison.Ordinal))
+                else if (text.StartsWith(SuggestionLineSign.message, StringComparison.Ordinal))
                     type = _classificationTypeRegistry.GetClassificationType("suggestion.message");
 
                 if (type != null)

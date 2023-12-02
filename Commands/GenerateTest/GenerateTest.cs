@@ -22,9 +22,10 @@ using AIProgrammingAssistant.Classification;
 namespace AIProgrammingAssistant.Commands.GenerateTest
 {
     [Command(PackageIds.GenerateTest)]
-    public class GenerateTest : BaseDICommand
+    public class GenerateTest : BaseDICommand 
     {
-        private readonly IAIFunctions aiApi;
+        private IAIFunctions aiApi;
+
         public GenerateTest(DIToolkitPackage package, IAIFunctions api) : base(package)
         {
             aiApi = api;
@@ -73,7 +74,7 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
 
             if (testFile.Exists)
             {
-                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", "A tesfile already exists with the given name!");
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", "A testfile already exists with the given name!");
                 return;
             }
 
@@ -83,14 +84,15 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             while (enumerator.MoveNext())
             {
                 Project analyzedProject = (Project)enumerator.Current;
-                var root = analyzedProject.GetRootFolder().Substring(0, analyzedProject.GetRootFolder().Length - 1);
-
-
-                if (testDirectoryPath.Contains(root))
-                {
-                    testProject = analyzedProject;
-                    testFileInfo.NameSpace = analyzedProject.Name + testDirectoryPath.Replace(root, "").Replace("\\\\", ".");
+                if (analyzedProject.GetRootFolder() != null) {
+                    var root = analyzedProject.GetRootFolder().Substring(0, analyzedProject.GetRootFolder().Length - 1);
+                    if (testDirectoryPath.Contains(root))
+                    {
+                        testProject = analyzedProject;
+                        testFileInfo.NameSpace = analyzedProject.Name + testDirectoryPath.Replace(root, "").Replace("\\", ".");
+                    }
                 }
+                
             }
 
             string testCode;
@@ -108,9 +110,7 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             }
             catch (AIApiException apiException)
             {
-                var exceptionMessage = apiException.Message;
-                exceptionMessage = exceptionMessage.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
-                DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, exceptionMessage);
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", apiException.Message); 
                 return;
             }
             
@@ -126,8 +126,8 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             _dte.ExecuteCommand("SolutionExplorer.SyncWithActiveDocument");
             _dte.ActiveDocument.Activate();
             item.Document.Activate();
-
-            DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, testCode);
+            var activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
+            DocumentHelper.insertSuggestion(activeDocument, 0, testCode);
             _dte.ExecuteCommand("ProjectandSolutionContextMenus.Project.SyncNamespaces");
             _dte.ExecuteCommand("Edit.FormatDocument");
         }

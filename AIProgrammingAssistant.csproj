@@ -61,6 +61,7 @@
     <Compile Include="Commands\GenerateTest\TestFileInfo.cs" />
     <Compile Include="Commands\GiveFeedBack\GiveFeedback.cs" />
     <Compile Include="Commands\Helpers\ActiveDocumentProperties.cs" />
+    <Compile Include="Commands\Helpers\ApiCallHelper.cs" />
     <Compile Include="Commands\Helpers\DocumentHelper.cs" />
     <Compile Include="Commands\Optimize\Optimize.cs" />
     <Compile Include="Commands\Optimize\SimpleSuggestionHandler.cs" />
@@ -86,6 +87,7 @@
       <Generator>VsixManifestGenerator</Generator>
       <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
+    <Content Include="Resources\brain.png" />
     <Content Include="Resources\Icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

@@ -7,16 +7,20 @@ using Community.VisualStudio.Toolkit;
 using Community.VisualStudio.Toolkit.DependencyInjection;
 using Community.VisualStudio.Toolkit.DependencyInjection.Core;
 using EnvDTE;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.TextManager.Interop;
 using System.Linq;
+using ServiceProvider = Microsoft.VisualStudio.Shell.ServiceProvider;
 
 namespace AIProgrammingAssistant.Commands.Optimize
 {
     [Command(PackageIds.Optimize)]
-    public class Optimize : BaseDICommand
+    public class Optimize : BaseDICommand //BaseCommand<Optimize> 
     {
-        private readonly IAIFunctions aiApi;
+        private IAIFunctions aiApi;
+  
+        
         public Optimize(DIToolkitPackage package, IAIFunctions api) : base(package)
         {
             aiApi = api;
@@ -24,6 +28,8 @@ namespace AIProgrammingAssistant.Commands.Optimize
 
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
+
+           
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             ActiveDocumentProperties activeDocumentProperties;
             try
@@ -35,6 +41,12 @@ namespace AIProgrammingAssistant.Commands.Optimize
                 await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", ex.Message);
                 return;
             }
+
+
+             
+            string optmizedCode = await ApiCallHelper.HandleApiCallAsync(() => aiApi.AskForOptimizedCodeAsync(activeDocumentProperties.WholeCode, activeDocumentProperties.SelectedCode));
+            if (optmizedCode == null) return;
+
             string optimizedCode;
             try
             {
@@ -49,14 +61,13 @@ namespace AIProgrammingAssistant.Commands.Optimize
             }
             catch (AIApiException apiException)
             {
-                var exceptionMessage = apiException.Message;
-                exceptionMessage = exceptionMessage.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
-                DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, exceptionMessage);
+
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", apiException.Message);
                 return;
             }
 
             optimizedCode = optimizedCode.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.optimization + " ");
-            activeDocumentProperties.OptimizedEndPosition = DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, optimizedCode);
+            activeDocumentProperties.OptimizedEndPosition = DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, optimizedCode);
             optimizedCode = optimizedCode.Replace(SuggestionLineSign.optimization, "    ");
 
             IVsTextManager2 textManager = (IVsTextManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));

@@ -20,6 +20,7 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
         private  ActiveDocumentProperties activeDocumentProperties;
         private readonly List<string> queries;
         private IOleCommandTarget nextCommandTarget;
+        private string activeQuery;
         private int queryIndex;
 
         public CreateQueryHandler(IVsTextView textView, ActiveDocumentProperties activeDocumentProperties, List<string> queries)
@@ -28,13 +29,14 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
             this.queries = queries ?? throw new ArgumentNullException(nameof(queries));
             this.activeDocumentProperties = activeDocumentProperties ?? throw new ArgumentNullException(nameof(activeDocumentProperties));
             queryIndex = 0;
+            activeQuery = queries[queryIndex];
             textView.AddCommandFilter(this, out nextCommandTarget);
         }
 
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            string query = queries[queryIndex];
+            
             if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.BACKSPACE)
             {
                 DocumentHelper.deleteSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, activeDocumentProperties.OptimizedEndPosition);
@@ -43,7 +45,7 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
             }
             else if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN)
             {
-                DocumentHelper.enforceSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalStartPosition, activeDocumentProperties.OptimizedEndPosition, query.Replace(SuggestionLineSign.linq, "    "));
+                DocumentHelper.enforceSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalStartPosition, activeDocumentProperties.OptimizedEndPosition, activeQuery.Replace(SuggestionLineSign.linq, "    "));
                 textView.RemoveCommandFilter(this);
                 return VSConstants.S_OK;
 
@@ -52,8 +54,9 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
             {
                 queryIndex++;
                 if (queryIndex >= queries.Count) queryIndex = 0;
-                DocumentHelper.enforceSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalStartPosition, activeDocumentProperties.OptimizedEndPosition, query); 
-                activeDocumentProperties.OptimizedEndPosition = activeDocumentProperties.OriginalEndPosition + query.Count();
+                activeQuery = queries[queryIndex];
+                activeDocumentProperties.ActiveDocument.TextBuffer.Replace(new Span(activeDocumentProperties.OriginalEndPosition, activeDocumentProperties.OptimizedEndPosition - activeDocumentProperties.OriginalEndPosition), activeQuery);
+                activeDocumentProperties.OptimizedEndPosition = activeDocumentProperties.OriginalEndPosition + activeQuery.Count();
             }
 
             return nextCommandTarget.Exec(ref pguidCmdGroup, nCmdID, nCmdexecopt, pvaIn, pvaOut);
