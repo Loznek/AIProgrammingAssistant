@@ -18,7 +18,12 @@ namespace AIProgrammingAssistant.Commands.Helpers
             var activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
             properties.ActiveDocument = activeDocument;
             var selectedCode = activeDocument?.TextView.Selection.SelectedSpans.FirstOrDefault();
-            if (!selectedCode.HasValue) throw new WrongSelectionException();
+
+            if (!selectedCode.HasValue) {
+                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", "No code selected");
+                return null;
+            };
+
             properties.SelectedCode = selectedCode?.GetText();
             properties.NumberOfStartingSpaces = (int)(selectedCode?.Start.GetContainingLine().GetText().TakeWhile(c => c == ' ').Count());
             properties.WholeCode = activeDocument?.TextView.TextBuffer.CurrentSnapshot.GetText();

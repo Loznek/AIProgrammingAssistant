@@ -37,18 +37,14 @@ namespace AIProgrammingAssistant
             services.AddTransient<GenerateTest>();
             services.AddTransient<GiveFeedback>();
             services.AddTransient<SuggestVariableNames>();
-            
-            //services.RegisterCommands(ServiceLifetime.Scoped);
         }  
         
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             await base.InitializeAsync(cancellationToken, progress);
             _dte = await GetServiceAsync(typeof(DTE)) as DTE2;
-            //apiKey= "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";
             Assumes.Present(_dte);
-            
-            //await this.RegisterCommandsAsync();
+
         }  
     }
 

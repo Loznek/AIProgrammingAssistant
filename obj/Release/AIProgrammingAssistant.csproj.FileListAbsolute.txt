@@ -232,3 +232,5 @@ D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\AIProgrammingAssistant.l
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\extension.vsixmanifest
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\files.json
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\createTemplateManifests.cache
+D:\Szakdolgozat_2023\AIProgrammingAssistant\bin\Release\Resources\brain_2.png
+D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Release\_EmptyResource.resources.original

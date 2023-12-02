@@ -18,11 +18,12 @@ using static Azure.Core.HttpHeader;
 using AIProgrammingAssistant.Commands.Helpers;
 using AIProgrammingAssistant.Commands.Exceptions;
 using AIProgrammingAssistant.Classification;
+using System.Diagnostics;
 
 namespace AIProgrammingAssistant.Commands.GenerateTest
 {
     [Command(PackageIds.GenerateTest)]
-    public class GenerateTest : BaseDICommand 
+    public class GenerateTest : BaseDICommand
     {
         private IAIFunctions aiApi;
 
@@ -37,16 +38,9 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             _dte = AIProgrammingAssistantPackage._dte;
-            ActiveDocumentProperties activeDocumentProperties;
-            try
-            {
-                activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
-            }
-            catch (WrongSelectionException ex)
-            {
-                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", ex.Message);
-                return;
-            }
+            
+            ActiveDocumentProperties activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
+            if (activeDocumentProperties == null) return;
 
             TestFileInfo testFileInfo = new TestFileInfo();
             string testFileName;
@@ -84,7 +78,8 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             while (enumerator.MoveNext())
             {
                 Project analyzedProject = (Project)enumerator.Current;
-                if (analyzedProject.GetRootFolder() != null) {
+                if (analyzedProject.GetRootFolder() != null)
+                {
                     var root = analyzedProject.GetRootFolder().Substring(0, analyzedProject.GetRootFolder().Length - 1);
                     if (testDirectoryPath.Contains(root))
                     {
@@ -92,28 +87,13 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
                         testFileInfo.NameSpace = analyzedProject.Name + testDirectoryPath.Replace(root, "").Replace("\\", ".");
                     }
                 }
-                
-            }
-
-            string testCode;
-            try
-            {
-               testCode = await aiApi.AskForTestCodeAsync(activeDocumentProperties.SelectedCode, activeDocumentProperties.WholeCode, testFileInfo.NameSpace, testFileInfo.ClassName);
-            }
-            catch (InvalidKeyException keyException)
-            {
-                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", keyException.Message);
-                TextInputDialog.Show("Worng OpenAI Api key was given", "You can change your API key", "key", out string keyString);
-                AIProgrammingAssistantPackage.apiKey = keyString;
-                return;
 
             }
-            catch (AIApiException apiException)
-            {
-                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", apiException.Message); 
-                return;
-            }
-            
+
+
+            string testCode = await ApiCallHelper.HandleApiCallAsync(() => aiApi.AskForTestCodeAsync(activeDocumentProperties.SelectedCode, activeDocumentProperties.WholeCode, testFileInfo.NameSpace, testFileInfo.ClassName));
+            if (testCode == null) return;
+
 
             await WriteFileAsync(testProject, testFile.FullName);
 
@@ -122,13 +102,12 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
 
             ServiceProvider sp = new ServiceProvider((Microsoft.VisualStudio.OLE.Interop.IServiceProvider)_dte);
             VsShellUtilities.OpenDocument(sp, testFile.FullName);
-            //ExecuteCommandIfAvailable("SolutionExplorer.SyncWithActiveDocument");
             _dte.ExecuteCommand("SolutionExplorer.SyncWithActiveDocument");
             _dte.ActiveDocument.Activate();
             item.Document.Activate();
             var activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
             DocumentHelper.insertSuggestion(activeDocument, 0, testCode);
-            _dte.ExecuteCommand("ProjectandSolutionContextMenus.Project.SyncNamespaces");
+            // _dte.ExecuteCommand("ProjectandSolutionContextMenus.Project.SyncNamespaces");
             _dte.ExecuteCommand("Edit.FormatDocument");
         }
 

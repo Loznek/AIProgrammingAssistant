@@ -12,6 +12,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.TextManager.Interop;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -38,18 +39,11 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            aiApi = new AzureApi();
+           
             _dte = AIProgrammingAssistantPackage._dte;
-            ActiveDocumentProperties activeDocumentProperties;
-            try
-            {
-                activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
-            }
-            catch (WrongSelectionException ex) {
-                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", ex.Message);
-                return;
-            }
-            
+            ActiveDocumentProperties activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
+            if (activeDocumentProperties == null) return;
+
             if (entitiesFolderPath == null)
             {
                 var folderDialog = new FolderBrowserDialog();
@@ -87,30 +81,15 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
                 schema += await file.OpenText().ReadToEndAsync();
             }
             List<string> queries = new List<string>();
-            List<string> rawQueries;
+            List<string> rawQueries = await ApiCallHelper.HandleApiCallAsync(() => aiApi.AskForQueryAsync(activeDocumentProperties.SelectedCode, activeDocumentProperties.WholeCode, context, schema));
+            if (rawQueries == null) return;
 
-            try
-            {
-                rawQueries = await aiApi.AskForQueryAsync(activeDocumentProperties.SelectedCode,activeDocumentProperties.WholeCode, context, schema);
-            }
-            catch (InvalidKeyException keyException)
-            {
-                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", keyException.Message);
-                TextInputDialog.Show("Worng OpenAI Api key was given", "You can change your API key", "key", out string keyString);
-                AIProgrammingAssistantPackage.apiKey = keyString;
-                return;
-
-            }
-            catch (AIApiException apiException)
-            {
-                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", apiException.Message);
-                return;
-            }
-            
             rawQueries.ForEach(q => queries.Add(q.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.linq +" ")));
             activeDocumentProperties.OptimizedEndPosition= DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, queries[0]);
-         
-            IVsTextManager2 textManager = (IVsTextManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));
+
+           
+
+            IVsTextManager2 textManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager)) as IVsTextManager2;
             textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out IVsTextView activeView);
             new CreateQueryHandler(activeView, activeDocumentProperties ,queries);
         }

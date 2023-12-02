@@ -11,9 +11,9 @@ namespace AIProgrammingAssistant.Commands.Helpers
 {
     internal static class ApiCallHelper
     {
-        public static async Task<string> HandleApiCallAsync(Func<Task<string>> calledFunction)
+        public static async Task<T> HandleApiCallAsync<T>(Func<Task<T>> calledFunction) where T : class
         {
-            string apiAnswer;
+            T apiAnswer;
             try
             {
                 apiAnswer = await calledFunction.Invoke();
@@ -34,7 +34,8 @@ namespace AIProgrammingAssistant.Commands.Helpers
             return apiAnswer;
         }
 
-        public static async Task<List<string>> HandleApiCallForListAsync(Func<Task<List<string>>> calledFunction)
+        
+        /*public static async Task<List<string>> HandleApiCallForListAsync(Func<Task<List<string>>> calledFunction)
         {
             List<string> apiAnswer;
             try
@@ -55,6 +56,6 @@ namespace AIProgrammingAssistant.Commands.Helpers
             }
 
             return apiAnswer;
-        }
+        }*/
     }
 }

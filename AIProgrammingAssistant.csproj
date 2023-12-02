@@ -56,7 +56,6 @@
     <Compile Include="Commands\CreateQuery\CreateQueryHandler.cs" />
     <Compile Include="Commands\Exceptions\AIApiException.cs" />
     <Compile Include="Commands\Exceptions\InvalidKeyException.cs" />
-    <Compile Include="Commands\Exceptions\WrongSelectionException.cs" />
     <Compile Include="Commands\GenerateTest\GenerateTest.cs" />
     <Compile Include="Commands\GenerateTest\TestFileInfo.cs" />
     <Compile Include="Commands\GiveFeedBack\GiveFeedback.cs" />
@@ -88,6 +87,10 @@
       <LastGenOutput>source.extension.cs</LastGenOutput>
     </None>
     <Content Include="Resources\brain.png" />
+    <Content Include="Resources\brain_2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\Icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
