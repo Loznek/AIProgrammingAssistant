@@ -1,15 +1,8 @@
-﻿using Microsoft.VisualStudio.OLE.Interop;
-using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.TextManager.Interop;
-using Microsoft.VisualStudio;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AIProgrammingAssistant.Commands.Helpers;
 using Community.VisualStudio.Toolkit;
-using EnvDTE;
-using AIProgrammingAssistant.Commands.Helpers;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.OLE.Interop;
+using Microsoft.VisualStudio.TextManager.Interop;
 
 namespace AIProgrammingAssistant.Commands.Optimize
 {
@@ -17,13 +10,15 @@ namespace AIProgrammingAssistant.Commands.Optimize
     {
         private readonly IVsTextView textView;
         private ActiveDocumentProperties activeDocumentProperties;
+        private DocumentView activeDocument;
         private readonly string insertedText;
         private IOleCommandTarget nextCommandTarget;
 
-        public SimpleSuggestionHandler(IVsTextView textView, ActiveDocumentProperties activeDocumentProperties, string insertedText)
+        public SimpleSuggestionHandler(IVsTextView textView,DocumentView activeDocument, ActiveDocumentProperties activeDocumentProperties, string insertedText)
         {
             this.textView = textView ?? throw new ArgumentNullException(nameof(textView));
             this.insertedText = insertedText ?? throw new ArgumentNullException(nameof(insertedText));
+            this.activeDocument = activeDocument ?? throw new ArgumentNullException(nameof(activeDocument));
             this.activeDocumentProperties = activeDocumentProperties ?? throw new ArgumentNullException(nameof(activeDocumentProperties));
             textView.AddCommandFilter(this, out nextCommandTarget);
         }
@@ -32,13 +27,13 @@ namespace AIProgrammingAssistant.Commands.Optimize
         {
             if ( pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.BACKSPACE)
             {
-                DocumentHelper.deleteSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, activeDocumentProperties.OptimizedEndPosition);
+                activeDocument.DeleteSuggestion(activeDocumentProperties.OriginalEndPosition, activeDocumentProperties.SuggestionEndPosition);
                 textView.RemoveCommandFilter(this);
                 return VSConstants.S_OK;
             }
             else if (pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.RETURN)
             {
-                DocumentHelper.enforceSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalStartPosition, activeDocumentProperties.OptimizedEndPosition, insertedText);
+                activeDocument.EnforceSuggestion(activeDocumentProperties.OriginalStartPosition, activeDocumentProperties.SuggestionEndPosition, insertedText);
                 textView.RemoveCommandFilter(this);
                 return VSConstants.S_OK;
 

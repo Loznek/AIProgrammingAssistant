@@ -65,7 +65,6 @@
     <Compile Include="Commands\Optimize\Optimize.cs" />
     <Compile Include="Commands\Optimize\SimpleSuggestionHandler.cs" />
     <Compile Include="Commands\SuggestVariableNames\SuggestVariableNames.cs" />
-    <Compile Include="Commands\SuggestVariableNames\SuggestVariableNamesHandler.cs" />
     <Compile Include="Commands\Helpers\ProjectHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AIProgrammingAssistantPackage.cs" />
@@ -81,6 +80,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
       <Generator>VsixManifestGenerator</Generator>

@@ -10,7 +10,7 @@ namespace AIProgrammingAssistant.Commands.Helpers
 {
     internal class ActiveDocumentProperties
     {
-        public DocumentView ActiveDocument { get; set; }
+        //public DocumentView ActiveDocument { get; set; }
 
         public string WholeCode { get; set; }
         public string SelectedCode { get; set; }
@@ -18,6 +18,6 @@ namespace AIProgrammingAssistant.Commands.Helpers
         
         public int OriginalStartPosition { get; set; }
         public int OriginalEndPosition { get; set; }
-        public int OptimizedEndPosition { get; set; }
+        public int SuggestionEndPosition { get; set; }
     }
 }

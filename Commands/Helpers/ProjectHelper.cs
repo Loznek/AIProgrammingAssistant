@@ -23,7 +23,7 @@ namespace AIProgrammingAssistant.Helpers
 {
     public static class ProjectHelper
     {
-        private static readonly DTE2 _dte = AIProgrammingAssistantPackage._dte;
+        private static readonly DTE2 _dte = AIProgrammingAssistantPackage.dte;
 
         public static string GetRootFolder(this Project project)
         {

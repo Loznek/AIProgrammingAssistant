@@ -232,3 +232,4 @@ D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Debug\AIProgrammingAssistant.lat
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Debug\extension.vsixmanifest
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Debug\files.json
 D:\Szakdolgozat_2023\AIProgrammingAssistant\obj\Debug\createTemplateManifests.cache
+D:\Szakdolgozat_2023\AIProgrammingAssistant\bin\Debug\Resources\brain_2.png

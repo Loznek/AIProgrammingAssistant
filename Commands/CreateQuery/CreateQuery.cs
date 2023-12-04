@@ -22,26 +22,25 @@ using System.Windows.Forms;
 namespace AIProgrammingAssistant.Commands.CreateQuery
 {
     [Command(PackageIds.CreateQuery)]
-    public class CreateQuery :  BaseDICommand  ////BaseCommand<CreateQuery>
+    public class CreateQuery :  BaseDICommand
     {
         private IAIFunctions aiApi;
-        
-        
+        private static string entitiesFolderPath;
+        private static string dbContextFilePath;
+
+
         public CreateQuery(DIToolkitPackage package, IAIFunctions api) : base(package)
         {
             aiApi = api;
         }
 
-        private static DTE2 _dte;
-        private static string entitiesFolderPath;
-        private static string dbContextFilePath;
-
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
            
-            _dte = AIProgrammingAssistantPackage._dte;
-            ActiveDocumentProperties activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
+            DTE2 _dte = AIProgrammingAssistantPackage.dte;
+            DocumentView activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
+            ActiveDocumentProperties activeDocumentProperties = await activeDocument.GetActiveDocumentPropertiesAsync();
             if (activeDocumentProperties == null) return;
 
             if (entitiesFolderPath == null)
@@ -85,20 +84,13 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
             if (rawQueries == null) return;
 
             rawQueries.ForEach(q => queries.Add(q.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.linq +" ")));
-            activeDocumentProperties.OptimizedEndPosition= DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, queries[0]);
+            activeDocumentProperties.SuggestionEndPosition= activeDocument.InsertSuggestion(activeDocumentProperties.OriginalEndPosition, queries[0]);
 
            
 
             IVsTextManager2 textManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager)) as IVsTextManager2;
             textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out IVsTextView activeView);
-            new CreateQueryHandler(activeView, activeDocumentProperties ,queries);
-        }
-
-        protected async Task<string> getTextAsync(string file)
-        {
-            await VS.Documents.OpenViaProjectAsync(file);
-            var text = await VS.Documents.GetDocumentViewAsync(file);
-            return text?.TextView.TextBuffer.CurrentSnapshot.GetText();
+            new CreateQueryHandler(activeView, activeDocument, activeDocumentProperties ,queries);
         }
 
     }

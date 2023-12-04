@@ -19,15 +19,13 @@ using Microsoft;
 namespace AIProgrammingAssistant
 {
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    //[InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(PackageGuids.AIProgrammingAssistantString)]
     public sealed class AIProgrammingAssistantPackage : MicrosoftDIToolkitPackage<AIProgrammingAssistantPackage> //ToolkitPackage 
     {
-        public static DTE2 _dte;
-        public static string apiKey { get; set; }
-
-        
+        public static DTE2 dte;
+        public static string ApiKey { get; set; }
+  
         protected override void InitializeServices(IServiceCollection services)
         {
             base.InitializeServices(services);
@@ -42,8 +40,8 @@ namespace AIProgrammingAssistant
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
             await base.InitializeAsync(cancellationToken, progress);
-            _dte = await GetServiceAsync(typeof(DTE)) as DTE2;
-            Assumes.Present(_dte);
+            dte = await GetServiceAsync(typeof(DTE)) as DTE2;
+            Assumes.Present(dte);
 
         }  
     }

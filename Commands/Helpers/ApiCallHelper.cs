@@ -21,8 +21,11 @@ namespace AIProgrammingAssistant.Commands.Helpers
             catch (InvalidKeyException keyException)
             {
                 await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", keyException.Message);
-                TextInputDialog.Show("Wrong OpenAI Api key was given", "You can change your API key", "key", out string keyString);
-                AIProgrammingAssistantPackage.apiKey = keyString;
+                bool userInsertedKey=TextInputDialog.Show("Wrong OpenAI Api key was given", "You can change your API key", "key", out string keyString);
+
+                if (!userInsertedKey) AIProgrammingAssistantPackage.ApiKey = null;
+                else AIProgrammingAssistantPackage.ApiKey = keyString;
+
                 return null;
             }
             catch (AIApiException apiException)
@@ -33,29 +36,5 @@ namespace AIProgrammingAssistant.Commands.Helpers
 
             return apiAnswer;
         }
-
-        
-        /*public static async Task<List<string>> HandleApiCallForListAsync(Func<Task<List<string>>> calledFunction)
-        {
-            List<string> apiAnswer;
-            try
-            {
-                apiAnswer = await calledFunction.Invoke();
-            }
-            catch (InvalidKeyException keyException)
-            {
-                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Error", keyException.Message);
-                TextInputDialog.Show("Wrong OpenAI Api key was given", "You can change your API key", "key", out string keyString);
-                AIProgrammingAssistantPackage.apiKey = keyString;
-                return null;
-            }
-            catch (AIApiException apiException)
-            {
-                await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", apiException.Message);
-                return null;
-            }
-
-            return apiAnswer;
-        }*/
     }
 }

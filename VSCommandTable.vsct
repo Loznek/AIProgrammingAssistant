@@ -32,7 +32,6 @@
 
 
 		<Buttons>
-
 			<Button guid="AIProgrammingAssistant" id="Optimize" priority="0x0600" type="Button">
 				<Parent guid="AIProgrammingAssistant" id="AISubMenuGroup" />
 				<Icon guid="ImageCatalogGuid" id="PropertySnippet" />

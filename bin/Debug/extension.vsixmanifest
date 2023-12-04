@@ -4,8 +4,8 @@
     <DisplayName>AIProgrammingAssistant</DisplayName>
     <Description xml:space="preserve">An AI assistant extension, what help you in coding with the power of GPT langugage models.
 OpenAI API key needed</Description>
-    <Icon>Resources\brain.png</Icon>
-    <PreviewImage>Resources\brain.png</PreviewImage>
+    <Icon>Resources\brain_2.png</Icon>
+    <PreviewImage>Resources\brain_2.png</PreviewImage>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0, 18.0)">

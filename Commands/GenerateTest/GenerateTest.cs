@@ -32,19 +32,19 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             aiApi = api;
         }
 
-        private static DTE2 _dte;
-
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            _dte = AIProgrammingAssistantPackage._dte;
-            
-            ActiveDocumentProperties activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
+            DTE2 _dte = AIProgrammingAssistantPackage.dte;
+
+            DocumentView activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
+            ActiveDocumentProperties activeDocumentProperties = await activeDocument.GetActiveDocumentPropertiesAsync();
             if (activeDocumentProperties == null) return;
 
             TestFileInfo testFileInfo = new TestFileInfo();
             string testFileName;
-            TextInputDialog.Show("Generate testfile", "Enter the name of the testfile ", "Testfile.cs", out testFileName);
+            bool userInsertedFileName=TextInputDialog.Show("Generate testfile", "Enter the name of the testfile ", "Testfile.cs", out testFileName);
+            if (!userInsertedFileName) return;
             testFileInfo.ClassName = testFileName.Substring(0, testFileName.Length - 3);
 
 
@@ -58,6 +58,7 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             {
                 testDirectoryPath = folderDialog.SelectedPath;
             }
+            else return;
 
             FileInfo testFile = new FileInfo(Path.Combine(testDirectoryPath, testFileName));
 
@@ -105,8 +106,8 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             _dte.ExecuteCommand("SolutionExplorer.SyncWithActiveDocument");
             _dte.ActiveDocument.Activate();
             item.Document.Activate();
-            var activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
-            DocumentHelper.insertSuggestion(activeDocument, 0, testCode);
+            activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
+            activeDocument.InsertSuggestion(0, testCode);
             // _dte.ExecuteCommand("ProjectandSolutionContextMenus.Project.SyncNamespaces");
             _dte.ExecuteCommand("Edit.FormatDocument");
         }

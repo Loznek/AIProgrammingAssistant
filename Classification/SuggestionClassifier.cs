@@ -39,10 +39,10 @@ namespace AIProgrammingAssistant.Classification
             if (snapshot.Length == 0)
                 return spans;
 
-            int startno = span.Start.GetContainingLine().LineNumber;
-            int endno = (span.End - 1).GetContainingLine().LineNumber;
+            int startNumber = span.Start.GetContainingLine().LineNumber;
+            int endNumber = (span.End - 1).GetContainingLine().LineNumber;
 
-            for (int i = startno; i <= endno; i++)
+            for (int i = startNumber; i <= endNumber; i++)
             {
                 ITextSnapshotLine line = snapshot.GetLineFromLineNumber(i);
 

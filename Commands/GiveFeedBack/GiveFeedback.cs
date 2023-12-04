@@ -34,15 +34,16 @@ namespace AIProgrammingAssistant.Commands.GiveFeedBack
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-          
-            ActiveDocumentProperties activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
+
+            DocumentView activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
+            ActiveDocumentProperties activeDocumentProperties = await activeDocument.GetActiveDocumentPropertiesAsync();
             if (activeDocumentProperties == null) return;
 
             string feedback = await ApiCallHelper.HandleApiCallAsync(() => aiApi.AskForFeedbackAsync(activeDocumentProperties.WholeCode, activeDocumentProperties.SelectedCode));
             if (feedback == null) return;
 
             feedback = feedback.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
-            DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, feedback);
+            activeDocument.InsertSuggestion(activeDocumentProperties.OriginalEndPosition, feedback);
 
         }
 

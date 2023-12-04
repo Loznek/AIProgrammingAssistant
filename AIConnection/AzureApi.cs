@@ -19,14 +19,20 @@ namespace AIProgrammingAssistant.AIConnection
         public AzureApi()
         {
             string keyString;
-            if (AIProgrammingAssistantPackage.apiKey == null)
+            if (AIProgrammingAssistantPackage.ApiKey == null)
             {
-                TextInputDialog.Show("OpenAI Api Key", "Enter the key of the API", "key", out keyString);
-                AIProgrammingAssistantPackage.apiKey = keyString;
+                bool inserted = TextInputDialog.Show("OpenAI Api Key", "Enter the key of the API", "key", out keyString);
+                if (inserted) AIProgrammingAssistantPackage.ApiKey = keyString;
+                else 
+                {
+                    keyString = "empty key";
+                    AIProgrammingAssistantPackage.ApiKey = keyString;
+                }
+
             }
             else
             {
-                keyString = AIProgrammingAssistantPackage.apiKey;
+                keyString = AIProgrammingAssistantPackage.ApiKey;
             }
             client = new OpenAIClient(keyString);
         }
@@ -35,17 +41,17 @@ namespace AIProgrammingAssistant.AIConnection
             var conversationMessages = new List<ChatMessage>()
                 {
                     new(ChatRole.System, $"There is a C# file: " + codeFile +
-                     $"There will be a given a part of this file, and you will be asked to make an opinion about that code, and only that part of code" +
+                     $"The user will give you a part of this file, and you will be asked to make an opinion about that code, and only that part of code" +
                      $"Your feedback could be based on security, clean code or performance attributes of the code." +
                      $"Your feedback should be maximum 6 sentence long, with every sentence in a new line. "
                      ),
                     new(ChatRole.User, $"There is this given C# code snippet:" +
                     selectedCode +
-                    $"What do you think about this code? Give me a feedback  about my code."),
+                    $"What do you think about this code? Give me a feedback  about my code!"),
                 };
             var chatCompletionsOptions = new ChatCompletionsOptions()
             {
-                DeploymentName = "gpt-4",
+                DeploymentName = "gpt-4-1106-preview",
                 Temperature = (float)0.8,
             };
             foreach (ChatMessage chatMessage in conversationMessages)
@@ -75,12 +81,14 @@ namespace AIProgrammingAssistant.AIConnection
             var conversationMessages = new List<ChatMessage>()
                 {
                    new(ChatRole.System, $"There is a C# file: " + codeFile +
-                                        $"There will be a given a part of this file, and you will be ordered to optimize that part of code - and only that part, not the whole file. Feel free to optimize the performance or code simplicty of the code" +
+                                        $"The user will give you a part of this file, and you will be ordered to optimize that part of code - and only that part, not the whole file." +
+                                        $" Feel free to optimize the performance or code simplicty of the code" +
                                         $"You have the whole file to understand the context of the given code." +
-                                        $"If you think that, the given code doesn't make sense or cannot be more effective, your answer must be exactly the following: 'Code can't be optimized' and nothing else, but your main goal is to optimize the snippet\"),"),
+                                        $"If you think that, the given code doesn't make sense or cannot be more effective, your answer must be exactly the following:" +
+                                        $" 'Code can't be optimized' and nothing else, but your main goal is to optimize the snippet\n"),
                    new(ChatRole.User,   $"Optimize this given C# code snippet:" +
                                         selectedCode +
-                                        $"Your ansver should only contain the optimized version of the given code without any explanation. ")
+                                        $"Your answer should only contain the optimized version of the given code without any explanation. ")
 
 
                 };
@@ -132,7 +140,7 @@ namespace AIProgrammingAssistant.AIConnection
 
             var chatCompletionsOptions = new ChatCompletionsOptions()
             {
-                DeploymentName = "gpt-4",
+                DeploymentName = "gpt-4-1106-preview",
                 Temperature = (float)1.1,
                 ChoiceCount = 3,
             };
@@ -212,7 +220,7 @@ namespace AIProgrammingAssistant.AIConnection
             var conversationMessages = new List<ChatMessage>()
                 {
                     new(ChatRole.System, $"There is a C# file: " + context +
-                     $"There will be a given a part of this file, and you will be asked to revision that code part regarding its variable names, considering c# naming conventions and the logic of the code snippet."+
+                     $"The user will give you a part of this file, and you will be asked to revision that code part regarding its variable names, considering c# naming conventions and the logic of the code snippet."+
                      $"Pay attention that all variable names should be expressive. Replace all the variable and even declarative function names, for which you have a better solution." +
                      $"Your anwer should be in that form: first you must write the whole corrected code without any explanation, and after that you should list the variable name changes: which name you have replaced for what new name" +
                      $"Between the corrected code and the list of the changes put a line with '####' text." +

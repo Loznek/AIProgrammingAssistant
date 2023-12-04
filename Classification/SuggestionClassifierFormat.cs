@@ -13,12 +13,12 @@ namespace AIProgrammingAssistant.Classification
     {
         public SuggestionOptimizationFormat()
         {
-            ForegroundColor = Colors.LightCoral;
+            ForegroundColor = Colors.Crimson;
             IsItalic = true;
             this.TextDecorations = null;
             this.TextEffects = null;
-            BackgroundOpacity = 0.2;
-            ForegroundOpacity = 0.8;
+            BackgroundOpacity = 0;
+            ForegroundOpacity = 1;
         }
     }
 
@@ -30,12 +30,13 @@ namespace AIProgrammingAssistant.Classification
     {
         public SuggestionLinqFormat()
         {
-            ForegroundColor = Colors.SandyBrown;
+            ForegroundColor = Colors.DarkOrange;
             IsBold = true;
-            BackgroundOpacity = 0.8;
+            IsItalic = true;
+            BackgroundOpacity = 0;
             this.TextDecorations = null;
             this.TextEffects = null;
-            ForegroundOpacity = 0.8;
+            ForegroundOpacity = 1;
         }
     }
 
@@ -44,17 +45,17 @@ namespace AIProgrammingAssistant.Classification
     [Name("suggestion.message")]
     [Order(Before = Priority.High, After = Priority.High)]
 
-    internal sealed class SuggestionMessageMessageFormat : ClassificationFormatDefinition
+    internal sealed class SuggestionMessageFormat : ClassificationFormatDefinition
     {
-        public SuggestionMessageMessageFormat()
+        public SuggestionMessageFormat()
         {
-            ForegroundColor = Colors.Orange;
+            ForegroundColor = Colors.Goldenrod;
             IsBold = true;
             IsItalic = true;
             this.TextDecorations = null;
             this.TextEffects = null;
-            BackgroundOpacity = 0.8;
-            ForegroundOpacity = 0.8;
+            BackgroundOpacity = 0;
+            ForegroundOpacity = 1;
         }
     }
 }

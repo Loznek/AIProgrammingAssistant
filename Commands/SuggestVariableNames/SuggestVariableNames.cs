@@ -32,8 +32,9 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-           
-            ActiveDocumentProperties activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
+
+            DocumentView activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
+            ActiveDocumentProperties activeDocumentProperties = await activeDocument.GetActiveDocumentPropertiesAsync();
             if (activeDocumentProperties == null) return;
 
             string[] separator = new string[] { "####" };
@@ -46,13 +47,13 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
             var message = resultValues[1].Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.message + " ");
             var goodCode = resultValues[0].Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces, 0)));
 
-            activeDocumentProperties.OptimizedEndPosition = DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, message);
+            activeDocumentProperties.SuggestionEndPosition = activeDocument.InsertSuggestion(activeDocumentProperties.OriginalEndPosition, message);
 
           
 
             IVsTextManager2 textManager = (IVsTextManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));
             textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out IVsTextView activeView);
-            new SimpleSuggestionHandler(activeView, activeDocumentProperties, goodCode);
+            new SimpleSuggestionHandler(activeView,activeDocument, activeDocumentProperties, goodCode);
 
         }
     }

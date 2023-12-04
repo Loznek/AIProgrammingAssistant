@@ -2,6 +2,7 @@
 using AIProgrammingAssistant.Classification;
 using AIProgrammingAssistant.Commands.Exceptions;
 using AIProgrammingAssistant.Commands.Helpers;
+
 using Azure;
 using Community.VisualStudio.Toolkit;
 using Community.VisualStudio.Toolkit.DependencyInjection;
@@ -20,37 +21,34 @@ namespace AIProgrammingAssistant.Commands.Optimize
     public class Optimize : BaseDICommand //BaseCommand<Optimize> 
     {
         private IAIFunctions aiApi;
-    
+
         public Optimize(DIToolkitPackage package, IAIFunctions api) : base(package)
         {
             aiApi = api;
         }
 
+        //o> kódjavaslat
+        //q> Ennek a három javaslatnak a kétharmada narancssárga... csak mondom
+        //m> Tudd meg hogy mi vagyunk a ...
+
+
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
-            
-
-
-         
 
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            ActiveDocumentProperties activeDocumentProperties = await DocumentHelper.GetActiveDocumentPropertiesAsync();
+            DocumentView activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
+            ActiveDocumentProperties activeDocumentProperties = await activeDocument.GetActiveDocumentPropertiesAsync();
             if (activeDocumentProperties == null) return;
-
             string optimizedCode = await ApiCallHelper.HandleApiCallAsync(() => aiApi.AskForOptimizedCodeAsync(activeDocumentProperties.WholeCode, activeDocumentProperties.SelectedCode));
             if (optimizedCode == null) return;
-
             optimizedCode = optimizedCode.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.optimization + " ");
-            activeDocumentProperties.OptimizedEndPosition = DocumentHelper.insertSuggestion(activeDocumentProperties.ActiveDocument, activeDocumentProperties.OriginalEndPosition, optimizedCode);
+            activeDocumentProperties.SuggestionEndPosition = activeDocument.InsertSuggestion(activeDocumentProperties.OriginalEndPosition, optimizedCode);
             optimizedCode = optimizedCode.Replace(SuggestionLineSign.optimization, "    ");
 
 
-           
-
             IVsTextManager2 textManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager)) as IVsTextManager2;
             textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out IVsTextView activeView);
-            new SimpleSuggestionHandler(activeView, activeDocumentProperties, optimizedCode);
+            new SimpleSuggestionHandler(activeView,activeDocument, activeDocumentProperties, optimizedCode);
 
         }
     }

@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AIProgrammingAssistant.AIConnection.AzureApi" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAACAAgAAAAAAAABAAAAAAAEAAAAAAABAAAAAA=</HashCode>
+      <FileName>AIConnection\AzureApi.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AIProgrammingAssistant.AIProgrammingAssistantPackage" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAAACAAAAAAAAAAAAgAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>AIProgrammingAssistantPackage.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Vsix" Collapsed="true">
+    <Position X="5.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAACAAAACAAgAAAAgAAAAAQAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>source.extension.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.PackageGuids" Collapsed="true">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>VSCommandTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.PackageIds" Collapsed="true">
+    <Position X="4" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAABAQAEACQCAAAAAAAAAABAAAEAgA=</HashCode>
+      <FileName>VSCommandTable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Classification.SuggestionClassifier" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAIAAAAAAAAAQ=</HashCode>
+      <FileName>Classification\SuggestionClassifier.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AIProgrammingAssistant.Classification.SuggestionClassifierClassificationDefinition" Collapsed="true">
+    <Position X="2.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAEBABAABAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Classification\SuggestionClassifierClassificationDefinition.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Classification.SuggestionOptimizationFormat" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Classification\SuggestionClassifierFormat.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Classification.SuggestionLinqFormat" Collapsed="true">
+    <Position X="7.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Classification\SuggestionClassifierFormat.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Classification.SuggestionMessageFormat" Collapsed="true">
+    <Position X="9.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Classification\SuggestionClassifierFormat.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Classification.SuggestionClassifierProvider" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="4" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAABAAAAAAAAA=</HashCode>
+      <FileName>Classification\SuggestionClassifierProvider.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AIProgrammingAssistant.Classification.SuggestionLineSign" Collapsed="true">
+    <Position X="5.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Classification\SuggestionLineSign.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.CreateQuery.CreateQuery" Collapsed="true">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAACAAEAAAAEA=</HashCode>
+      <FileName>Commands\CreateQuery\CreateQuery.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.CreateQuery.CreateQueryHandler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAwAAAAAAAAAQQAAABAAAABAMAAAAAABAAAA=</HashCode>
+      <FileName>Commands\CreateQuery\CreateQueryHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.Exceptions.AIApiException" Collapsed="true">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Exceptions\AIApiException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.Exceptions.InvalidKeyException" Collapsed="true">
+    <Position X="7.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Exceptions\InvalidKeyException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.GenerateTest.GenerateTest" Collapsed="true">
+    <Position X="4" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAQAAAAAAAAAAAACAAAAAAAEA=</HashCode>
+      <FileName>Commands\GenerateTest\GenerateTest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.GenerateTest.TestFileInfo" Collapsed="true">
+    <Position X="4" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Commands\GenerateTest\TestFileInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.GiveFeedBack.GiveFeedback" Collapsed="true">
+    <Position X="5.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAEA=</HashCode>
+      <FileName>Commands\GiveFeedBack\GiveFeedback.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.Helpers.ActiveDocumentProperties">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAAAAIAAAAAAAAAAAAAAAABAABAAAAACAA=</HashCode>
+      <FileName>Commands\Helpers\ActiveDocumentProperties.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.Helpers.ApiCallHelper" Collapsed="true">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Commands\Helpers\ApiCallHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.Helpers.DocumentHelper" Collapsed="true">
+    <Position X="2.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAQAAAAAAAAAAAAAAAAAAAACAAIAAA=</HashCode>
+      <FileName>Commands\Helpers\DocumentHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Helpers.ProjectHelper" Collapsed="true">
+    <Position X="5.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAABABAAAAAACBAAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Commands\Helpers\ProjectHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Helpers.ProjectTypes" Collapsed="true">
+    <Position X="7.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAQBAAAAAAAIAAAAAAAAACAAAAAAAAAAAQA=</HashCode>
+      <FileName>Commands\Helpers\ProjectHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.Optimize.Optimize" Collapsed="true">
+    <Position X="0.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAEA=</HashCode>
+      <FileName>Commands\Optimize\Optimize.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.Optimize.SimpleSuggestionHandler" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAQQAAAAAAAABAIAAAAAABAAAA=</HashCode>
+      <FileName>Commands\Optimize\SimpleSuggestionHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AIProgrammingAssistant.Commands.SuggestVariableNames.SuggestVariableNames" Collapsed="true">
+    <Position X="2.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAEA=</HashCode>
+      <FileName>Commands\SuggestVariableNames\SuggestVariableNames.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System.Runtime.CompilerServices.IsExternalInit" Collapsed="true">
+    <Position X="9.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Properties\AssemblyInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="AIProgrammingAssistant.AIConnection.IAIFunctions" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAACAAgAAAAAAAABAAAAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AIConnection\IAIFunctions.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
