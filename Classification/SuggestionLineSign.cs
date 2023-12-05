@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace AIProgrammingAssistant.Classification
 {
+    /// <summary>
+    /// A static class that contains the differents signs of the suggestion lines.
+    /// </summary>
     public static class SuggestionLineSign
     {
         public static readonly string message = "//m>";

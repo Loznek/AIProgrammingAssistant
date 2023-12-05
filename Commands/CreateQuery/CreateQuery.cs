@@ -34,6 +34,11 @@ namespace AIProgrammingAssistant.Commands.CreateQuery
             aiApi = api;
         }
 
+        /// <summary>
+        /// Executes the Query Generating command when the menu item is clicked.
+        /// Get the selected code and send it to the API with the necessery information about the database schema. 
+        /// Then insert the first query into the active document.
+        /// </summary>
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();

@@ -22,7 +22,7 @@ using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 namespace AIProgrammingAssistant.Commands.GiveFeedBack
 {
     [Command(PackageIds.GiveFeedback)]
-    public class GiveFeedback : BaseDICommand //BaseCommand<GiveFeedback> 
+    public class GiveFeedback : BaseDICommand
     {
         private IAIFunctions aiApi;
 
@@ -31,6 +31,12 @@ namespace AIProgrammingAssistant.Commands.GiveFeedBack
         {
             aiApi = api;
         }
+
+        /// <summary>
+        /// Executes the GiveFeedBack command when the menu item is clicked.
+        /// Get the selected code and send it to the API. 
+        /// Then insert the feedback into the active document.
+        /// </summary>
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();

@@ -32,6 +32,10 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             aiApi = api;
         }
 
+        /// <summary>
+        /// Executes the Tesfile generation command when the menu item is clicked.
+        /// Creates a new testfile and inserts the AI suggested testcode to that document.
+        /// </summary>
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -41,13 +45,14 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             ActiveDocumentProperties activeDocumentProperties = await activeDocument.GetActiveDocumentPropertiesAsync();
             if (activeDocumentProperties == null) return;
 
+            // Get the name of the testfile from the user
             TestFileInfo testFileInfo = new TestFileInfo();
             string testFileName;
             bool userInsertedFileName=TextInputDialog.Show("Generate testfile", "Enter the name of the testfile ", "Testfile.cs", out testFileName);
             if (!userInsertedFileName) return;
             testFileInfo.ClassName = testFileName.Substring(0, testFileName.Length - 3);
 
-
+            // Get the path of the testfile from the user
             string testDirectoryPath = "";
             var folderDialog = new FolderBrowserDialog();
             folderDialog.Description = "Select the test directory!";
@@ -73,6 +78,7 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
                 return;
             }
 
+            // Find the project that the testfile belongs to
             Project testProject = _dte.Solution.FindProjectItem(_dte.ActiveDocument.FullName).ContainingProject;
             Projects projects = _dte.Solution.Projects;
             var enumerator = projects.GetEnumerator();
@@ -96,8 +102,8 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             if (testCode == null) return;
 
 
-            await WriteFileAsync(testProject, testFile.FullName);
-
+            //Create the testfile and place it in the project
+            await WriteToDiskAsync(testFile.FullName, string.Empty);
             ProjectItem item = testProject.AddFileToProject(testFile);
             testProject.ProjectItems.AddFromFile(testFile.FullName);
 
@@ -112,13 +118,10 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             _dte.ExecuteCommand("Edit.FormatDocument");
         }
 
-        private static async Task<int> WriteFileAsync(Project project, string file)
-        {
-            await WriteToDiskAsync(file, string.Empty);
-            return 0;
-        }
-
-        private static async Task WriteToDiskAsync(string file, string content)
+        /// <summary>
+        /// Writes the testfile to the disk.
+        /// </summary>
+        private async Task WriteToDiskAsync(string file, string content)
         {
             using (StreamWriter writer = new StreamWriter(file, false, new UTF8Encoding(true)))
             {

@@ -20,7 +20,7 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
 {
 
     [Command(PackageIds.SuggestVariableNames)]
-    public class SuggestVariableNames : BaseDICommand // ////BaseCommand<SuggestVariableNames>
+    public class SuggestVariableNames : BaseDICommand 
     {
         private IAIFunctions aiApi;
 
@@ -29,6 +29,12 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
             aiApi = api;
         }
 
+
+        /// <summary>
+        /// Executes the Variable revision command when the menu item is clicked.
+        /// Get the selected code and send it to the API. 
+        /// Then insert the suggested variable changes into the active document.
+        /// </summary>
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -48,8 +54,6 @@ namespace AIProgrammingAssistant.Commands.SuggestVariableNames
             var goodCode = resultValues[0].Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces, 0)));
 
             activeDocumentProperties.SuggestionEndPosition = activeDocument.InsertSuggestion(activeDocumentProperties.OriginalEndPosition, message);
-
-          
 
             IVsTextManager2 textManager = (IVsTextManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsTextManager));
             textManager.GetActiveView2(1, null, (uint)_VIEWFRAMETYPE.vftCodeWindow, out IVsTextView activeView);

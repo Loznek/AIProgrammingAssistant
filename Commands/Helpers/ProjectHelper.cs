@@ -21,26 +21,24 @@ using Solution = EnvDTE.Solution;
 
 namespace AIProgrammingAssistant.Helpers
 {
+
+    /// <summary>
+    /// This class is based on the class with the same the in the following project:Mads Kristensen: Add Any File, https://github.com/madskristensen/AddAnyFile
+    /// </summary>
     public static class ProjectHelper
     {
         private static readonly DTE2 _dte = AIProgrammingAssistantPackage.dte;
 
         public static string GetRootFolder(this Project project)
         {
-            if (project == null)
-            {
-                return null;
-            }
+            if (project == null) return null;
 
             if (project.IsKind("{66A26720-8FB5-11D2-AA7E-00C04F688DDE}")) //ProjectKinds.vsProjectKindSolutionFolder
             {
                 return Path.GetDirectoryName(_dte.Solution.FullName);
             }
 
-            if (string.IsNullOrEmpty(project.FullName))
-            {
-                return null;
-            }
+            if (string.IsNullOrEmpty(project.FullName)) return null;
 
             string fullPath;
 
@@ -67,15 +65,9 @@ namespace AIProgrammingAssistant.Helpers
                 return File.Exists(project.FullName) ? Path.GetDirectoryName(project.FullName) : null;
             }
 
-            if (Directory.Exists(fullPath))
-            {
-                return fullPath;
-            }
+            if (Directory.Exists(fullPath)) return fullPath;
 
-            if (File.Exists(fullPath))
-            {
-                return Path.GetDirectoryName(fullPath);
-            }
+            if (File.Exists(fullPath)) return Path.GetDirectoryName(fullPath);
 
             return null;
         }
@@ -146,10 +138,8 @@ namespace AIProgrammingAssistant.Helpers
         {
             try
             {
-                if (item == null || item.ContainingProject == null)
-                {
-                    return;
-                }
+                if (item == null || item.ContainingProject == null) return;
+
 
                 if (string.IsNullOrEmpty(itemType)
                     || item.ContainingProject.IsKind(ProjectTypes.WEBSITE_PROJECT)

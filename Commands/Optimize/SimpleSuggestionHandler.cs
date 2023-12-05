@@ -23,6 +23,10 @@ namespace AIProgrammingAssistant.Commands.Optimize
             textView.AddCommandFilter(this, out nextCommandTarget);
         }
 
+        /// <summary>
+        /// Handles the key events that are passed to the command filter by the text view.
+        /// At backspace or enter, the suggestion is deleted or inserted and then the command filter is removed.
+        /// </summary>
         public int Exec(ref Guid pguidCmdGroup, uint nCmdID, uint nCmdexecopt, IntPtr pvaIn, IntPtr pvaOut)
         {
             if ( pguidCmdGroup == VSConstants.VSStd2K && nCmdID == (uint)VSConstants.VSStd2KCmdID.BACKSPACE)

@@ -28,7 +28,11 @@ namespace AIProgrammingAssistant.Commands.Optimize
         }
 
 
-
+        /// <summary>
+        /// Executes the Optimize command when the menu item is clicked.
+        /// Get the selected code and send it to the API. 
+        /// Then insert the suggestion into the active document.
+        /// </summary>
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
         {
 
@@ -36,6 +40,7 @@ namespace AIProgrammingAssistant.Commands.Optimize
             DocumentView activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
             ActiveDocumentProperties activeDocumentProperties = await activeDocument.GetActiveDocumentPropertiesAsync();
             if (activeDocumentProperties == null) return;
+
             string optimizedCode = await ApiCallHelper.HandleApiCallAsync(() => aiApi.AskForOptimizedCodeAsync(activeDocumentProperties.WholeCode, activeDocumentProperties.SelectedCode));
             if (optimizedCode == null) return;
             optimizedCode = optimizedCode.Replace("\n", "\n" + new string(' ', Math.Max(activeDocumentProperties.NumberOfStartingSpaces - 5, 0)) + SuggestionLineSign.optimization + " ");

@@ -11,6 +11,9 @@ namespace AIProgrammingAssistant.Commands.Helpers
 {
     internal static class ApiCallHelper
     {
+        /// <summary>
+        /// Handles the api call and shows the user the appropriate message box if an error occured
+        /// </summary>
         public static async Task<T> HandleApiCallAsync<T>(Func<Task<T>> calledFunction) where T : class
         {
             T apiAnswer;

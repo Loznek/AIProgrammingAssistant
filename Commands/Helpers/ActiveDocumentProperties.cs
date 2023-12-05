@@ -8,9 +8,12 @@ using System.Threading.Tasks;
 
 namespace AIProgrammingAssistant.Commands.Helpers
 {
+
+    /// <summary>
+    /// A class that holds the relevant properties of the active document.
+    /// </summary>
     internal class ActiveDocumentProperties
     {
-        //public DocumentView ActiveDocument { get; set; }
 
         public string WholeCode { get; set; }
         public string SelectedCode { get; set; }

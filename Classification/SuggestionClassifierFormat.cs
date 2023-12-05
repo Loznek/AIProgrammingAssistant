@@ -5,6 +5,13 @@ using System.Windows.Media;
 
 namespace AIProgrammingAssistant.Classification
 {
+
+
+
+
+    /// <summary>
+    /// The class describes the formating rules for the "optimization" classification type
+    /// </summary>
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = "suggestion.optimization")]
     [Name("suggestion.optimization")]
@@ -22,6 +29,9 @@ namespace AIProgrammingAssistant.Classification
         }
     }
 
+    /// <summary>
+    /// The class describes the formating rules for the "linq" classification type
+    /// </summary>
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = "suggestion.linq")]
     [Name("suggestion.linq")]
@@ -40,6 +50,10 @@ namespace AIProgrammingAssistant.Classification
         }
     }
 
+
+    /// <summary>
+    /// The class describes the formating rules for the "message" classification type
+    /// </summary>
     [Export(typeof(EditorFormatDefinition))]
     [ClassificationType(ClassificationTypeNames = "suggestion.message")]
     [Name("suggestion.message")]
