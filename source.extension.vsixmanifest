@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="AIProgrammingAssistant.46850645-4d88-4573-918d-9a8f756b778c" Version="0.4" Language="en-US" Publisher="Zoltán Kende" />
+        <Identity Id="AIProgrammingAssistant.46850645-4d88-4573-918d-9a8f756b778c" Version="1.2" Language="en-US" Publisher="Zoltán Kende" />
         <DisplayName>AIProgrammingAssistant</DisplayName>
         <Description xml:space="preserve">An AI assistant extension, what help you in coding with the power of GPT langugage models.
 OpenAI API key needed</Description>

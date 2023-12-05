@@ -51,7 +51,7 @@ namespace AIProgrammingAssistant.AIConnection
                 };
             var chatCompletionsOptions = new ChatCompletionsOptions()
             {
-                DeploymentName = "gpt-4-1106-preview",
+                DeploymentName = "gpt-4",
                 Temperature = (float)0.8,
             };
             foreach (ChatMessage chatMessage in conversationMessages)
@@ -140,7 +140,7 @@ namespace AIProgrammingAssistant.AIConnection
 
             var chatCompletionsOptions = new ChatCompletionsOptions()
             {
-                DeploymentName = "gpt-4-1106-preview",
+                DeploymentName = "gpt-4",
                 Temperature = (float)1.1,
                 ChoiceCount = 3,
             };
