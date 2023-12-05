@@ -27,9 +27,6 @@ namespace AIProgrammingAssistant.Commands.Optimize
             aiApi = api;
         }
 
-        //o> kódjavaslat
-        //q> Ennek a három javaslatnak a kétharmada narancssárga... csak mondom
-        //m> Tudd meg hogy mi vagyunk a ...
 
 
         protected override async Task ExecuteAsync(OleMenuCmdEventArgs e)
