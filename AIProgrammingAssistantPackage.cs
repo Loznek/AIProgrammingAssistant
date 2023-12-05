@@ -25,7 +25,11 @@ namespace AIProgrammingAssistant
     {
         public static DTE2 dte;
         public static string ApiKey { get; set; }
-  
+
+
+        /// <summary>
+        /// Register services that this package will use.
+        /// </summary>
         protected override void InitializeServices(IServiceCollection services)
         {
             base.InitializeServices(services);

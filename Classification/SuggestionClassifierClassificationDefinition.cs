@@ -13,7 +13,7 @@ namespace AIProgrammingAssistant.Classification
 #pragma warning disable 169
 
         /// <summary>
-        /// Defines the "SuggestionClassifier" classification type.
+        /// Defines the "SuggestionClassifier" classification types.
         /// </summary>
         [Export]
         [Name("suggestion")]

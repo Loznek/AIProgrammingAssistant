@@ -12,17 +12,18 @@ namespace AIProgrammingAssistant.Commands.Helpers
 {
     internal static class DocumentHelper
     {
+
+        /// <summary>
+        /// Collects the necessary information from the active document.
+        /// </summary>
         public static async Task<ActiveDocumentProperties> GetActiveDocumentPropertiesAsync(this DocumentView activeDocument) 
         {
             ActiveDocumentProperties properties = new ActiveDocumentProperties();
-            //var activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
-            //properties.ActiveDocument = activeDocument;
             var selectedCode = activeDocument?.TextView.Selection.SelectedSpans.FirstOrDefault();
 
 
             if (!selectedCode.HasValue || selectedCode.Value.IsEmpty) {
                 await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", "No code selected");
-                //VS.MessageBox.ShowErrorAsync
                 return null;
             };
 
@@ -34,23 +35,19 @@ namespace AIProgrammingAssistant.Commands.Helpers
             return properties;
         }
 
+        /// <summary>
+        /// Inserts the suggestion to the active document.
+        /// </summary>
         public static int InsertSuggestion(this DocumentView activeDocument, int startPosition, string suggestion) {
             var edit = activeDocument.TextBuffer.CreateEdit();
             edit.Insert(startPosition, suggestion);
             edit.Apply();
             return (int)(activeDocument?.TextView.Selection.SelectedSpans.LastOrDefault().End.Position);
         }
-   //o> public static int InsertSuggestion(this DocumentView activeDocument, int startPosition, string suggestion) 
-   //o> {
-   //o>     using (var edit = activeDocument.TextBuffer.CreateEdit())
-   //o>     {
-   //o>         edit.Insert(startPosition, suggestion);
-   //o>         edit.Apply();
-   //o>     }
-   //o>     return (int)(activeDocument?.TextView.Selection.SelectedSpans.LastOrDefault().End.Position);
-   //o> }
-   //o> 
 
+        /// <summary>
+        /// Deletes the suggestion from the active document.
+        /// </summary>
         public static void DeleteSuggestion(this DocumentView activeDocument, int startPosition, int endPosition)
         {
             var edit = activeDocument.TextBuffer.CreateEdit();
@@ -59,6 +56,9 @@ namespace AIProgrammingAssistant.Commands.Helpers
             AIProgrammingAssistantPackage.dte.ExecuteCommand("Edit.FormatDocument");
         }
 
+        /// <summary>
+        /// Replaces the selected code with the suggestion.
+        /// </summary>
         public static void EnforceSuggestion(this DocumentView activeDocument, int startPosition, int endPosition, string suggestion)
         {
             var edit = activeDocument.TextBuffer.CreateEdit();

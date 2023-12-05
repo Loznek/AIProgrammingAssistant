@@ -16,6 +16,10 @@ namespace AIProgrammingAssistant.AIConnection
     {
         OpenAIClient client;
 
+
+        /// <summary>
+        /// Api constructor, what creates a instatiates a OpenAIClient object with the API-key.
+        /// </summary>
         public AzureApi()
         {
             string keyString;
@@ -36,6 +40,10 @@ namespace AIProgrammingAssistant.AIConnection
             }
             client = new OpenAIClient(keyString);
         }
+
+        /// <summary>
+        /// Ask for feedback about the selected code from the AI.
+        /// </summary>
         public async Task<string> AskForFeedbackAsync(string codeFile, string selectedCode)
         {
             var conversationMessages = new List<ChatMessage>()
@@ -76,6 +84,9 @@ namespace AIProgrammingAssistant.AIConnection
             }
         }
 
+        /// <summary>
+        /// Ask for the optimized version of the given code snippet from the AI.
+        /// </summary>
         public async Task<string> AskForOptimizedCodeAsync(string codeFile, string selectedCode)
         {
             var conversationMessages = new List<ChatMessage>()
@@ -120,6 +131,9 @@ namespace AIProgrammingAssistant.AIConnection
             }
         }
 
+        /// <summary>
+        /// Ask for a LINQ query for the given human question from the AI.
+        /// </summary>
         public async Task<List<string>> AskForQueryAsync(string humanQuery,string wholeCode, string context, string schema)
         {
             var conversationMessages = new List<ChatMessage>()
@@ -171,6 +185,9 @@ namespace AIProgrammingAssistant.AIConnection
 
         }
 
+        /// <summary>
+        /// Ask for a testclass for the given code snippet from the AI.
+        /// </summary>
         public async Task<string> AskForTestCodeAsync(string code, string context, string nameSpace, string className)
         {
             var conversationMessages = new List<ChatMessage>()
@@ -212,9 +229,9 @@ namespace AIProgrammingAssistant.AIConnection
             }
         }
 
-
-
-
+        /// <summary>
+        /// Ask for the rivision of the used variable names for the given code snippet from the AI.
+        /// </summary>
         public async Task<string> AskForVariableRevisionAsync(string selectedCode, string context)
         {
             var conversationMessages = new List<ChatMessage>()
