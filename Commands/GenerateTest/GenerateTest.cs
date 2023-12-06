@@ -114,7 +114,7 @@ namespace AIProgrammingAssistant.Commands.GenerateTest
             item.Document.Activate();
             activeDocument = await VS.Documents.GetActiveDocumentViewAsync();
             activeDocument.InsertSuggestion(0, testCode);
-            // _dte.ExecuteCommand("ProjectandSolutionContextMenus.Project.SyncNamespaces");
+
             _dte.ExecuteCommand("Edit.FormatDocument");
         }
 

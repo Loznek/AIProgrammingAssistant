@@ -16,13 +16,14 @@ namespace AIProgrammingAssistant.Commands.Helpers
         /// <summary>
         /// Collects the necessary information from the active document.
         /// </summary>
-        public static async Task<ActiveDocumentProperties> GetActiveDocumentPropertiesAsync(this DocumentView activeDocument) 
+        public static async Task<ActiveDocumentProperties> GetActiveDocumentPropertiesAsync(this DocumentView activeDocument)
         {
             ActiveDocumentProperties properties = new ActiveDocumentProperties();
             var selectedCode = activeDocument?.TextView.Selection.SelectedSpans.FirstOrDefault();
 
 
-            if (!selectedCode.HasValue || selectedCode.Value.IsEmpty) {
+            if (!selectedCode.HasValue || selectedCode.Value.IsEmpty)
+            {
                 await VS.MessageBox.ShowWarningAsync("AI Programming Assistant Warning", "No code selected");
                 return null;
             };
@@ -38,35 +39,46 @@ namespace AIProgrammingAssistant.Commands.Helpers
         /// <summary>
         /// Inserts the suggestion to the active document.
         /// </summary>
-        public static int InsertSuggestion(this DocumentView activeDocument, int startPosition, string suggestion) {
-            var edit = activeDocument.TextBuffer.CreateEdit();
-            edit.Insert(startPosition, suggestion);
-            edit.Apply();
+
+        public static int InsertSuggestion(this DocumentView activeDocument, int startPosition, string suggestion)
+        {
+            using (var edit = activeDocument.TextBuffer.CreateEdit())
+            {
+                edit.Insert(startPosition, suggestion);
+                edit.Apply();
+            }
             return (int)(activeDocument?.TextView.Selection.SelectedSpans.LastOrDefault().End.Position);
         }
+
 
         /// <summary>
         /// Deletes the suggestion from the active document.
         /// </summary>
+
         public static void DeleteSuggestion(this DocumentView activeDocument, int startPosition, int endPosition)
         {
-            var edit = activeDocument.TextBuffer.CreateEdit();
-            edit.Delete(new Span(startPosition, endPosition - startPosition));
-            edit.Apply();
+            using (var edit = activeDocument.TextBuffer.CreateEdit())
+            {
+                edit.Delete(new Span(startPosition, endPosition - startPosition));
+                edit.Apply();
+            }
             AIProgrammingAssistantPackage.dte.ExecuteCommand("Edit.FormatDocument");
         }
+
 
         /// <summary>
         /// Replaces the selected code with the suggestion.
         /// </summary>
         public static void EnforceSuggestion(this DocumentView activeDocument, int startPosition, int endPosition, string suggestion)
         {
-            var edit = activeDocument.TextBuffer.CreateEdit();
-            edit.Delete(new Span(startPosition, endPosition - startPosition));
-            edit.Insert(startPosition, suggestion);
-            edit.Apply();
+            using (var edit = activeDocument.TextBuffer.CreateEdit())
+            {
+                edit.Replace(new Span(startPosition, endPosition - startPosition), suggestion);
+                edit.Apply();
+            }
             AIProgrammingAssistantPackage.dte.ExecuteCommand("Edit.FormatDocument");
         }
-  
+
+
     }
 }
